@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "logical_model"
   gem.homepage = "http://github.com/dwaynemac/logical_model"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{LogicalModel allows to use a resource as a model. }
+  gem.description = %Q{LogicalModel allows to use a resource as a model. It is based on web presentation xxx}
   gem.email = "dwaynemac@gmail.com"
   gem.authors = ["Dwayne Macgowan"]
   # dependencies defined in Gemfile

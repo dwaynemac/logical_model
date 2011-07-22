@@ -1,6 +1,6 @@
 = logical_model
 
-Description goes here.
+LogicalModel allows to use a resource as a model.
 
 == Contributing to logical_model
  
