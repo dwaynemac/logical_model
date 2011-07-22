@@ -5,7 +5,18 @@ require 'logger'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
 #
-# For rails 3 usage
+#
+# Configuration attributes:
+#   host: Host of the WS. eg: "localhost:3000"
+#   resource_path: Path of this resources. eg: "/api/resources"
+#   attribute_keys: Attributes. eg: [:id, :attr_a, :attr_b]
+#   use_ssl: will use https if true, http if false
+#   use_api_key: set to true if api_key is needed to access resource
+#   api_key_name: api key parameter name. eg: app_key
+#   api_key: api_key. eg: "asd32fa4s4pdf35tr"
+#   log_path: Path to log file. Will be ignored if using Rails.
+#
+# You may use validations such as validates_presence_of, etc.
 #
 # Usage:
 #  class RemoteResource < LogicalModel
@@ -46,7 +57,7 @@ class LogicalModel
   end
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :use_ssl, :use_api_key, :api_key, :api_key_name
+    attr_accessor :host, :hydra, :resource_path, :use_ssl, :use_api_key, :api_key, :api_key_name, :log_path
 
     # host eg: "127.0.0.1:3010"
     # resource_path eg: "/api/v1/people"
@@ -109,7 +120,8 @@ class LogicalModel
     if defined?(Rails)
       Rails.logger
     else
-      Logger.new("log.log")
+      path = self.log_path.nil?? "log.log" : self.log_path
+      Logger.new(path)
     end
   end
 
