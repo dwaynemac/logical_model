@@ -22,3 +22,5 @@ further details.
 === TODO
 
 * specs!
+* remove rails dependency
+* put log in /log

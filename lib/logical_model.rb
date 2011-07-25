@@ -166,12 +166,12 @@ class LogicalModel
         log_ok(response)
 
         result_set = self.from_json(response.body)
+
         # this paginate is will_paginate's Array pagination
-        collection = result_set[:collection].paginate(:total_entries => result_set[:total],
+        collection = result_set[:collection].paginate(:page => options[:page],
+                                                      :total_entries => result_set[:total],
                                                       :per_page => options[:per_page])
 
-        # .current_page= is defined in our will_paginate_hack.rb
-        collection.current_page= options[:page]
         yield collection
       else
         log_failed(response)

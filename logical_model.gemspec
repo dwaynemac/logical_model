@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/logical_model.rb",
+    "logical_model.gemspec",
     "test/helper.rb",
     "test/test_logical_model.rb"
   ]
@@ -40,6 +41,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rails>, ["= 3.0.7"])
       s.add_runtime_dependency(%q<typhoeus>, ["= 0.2.4"])
+      s.add_runtime_dependency(%q<will_paginate>, ["= 3.0.pre2"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -47,6 +49,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<rails>, ["= 3.0.7"])
       s.add_dependency(%q<typhoeus>, ["= 0.2.4"])
+      s.add_dependency(%q<will_paginate>, ["= 3.0.pre2"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -55,6 +58,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<rails>, ["= 3.0.7"])
     s.add_dependency(%q<typhoeus>, ["= 0.2.4"])
+    s.add_dependency(%q<will_paginate>, ["= 3.0.pre2"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])

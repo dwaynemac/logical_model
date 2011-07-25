@@ -73,6 +73,7 @@ GEM
       mime-types
       mime-types
     tzinfo (0.3.29)
+    will_paginate (3.0.pre2)
 
 PLATFORMS
   ruby
@@ -84,3 +85,4 @@ DEPENDENCIES
   rcov
   shoulda
   typhoeus (= 0.2.4)
+  will_paginate (= 3.0.pre2)
