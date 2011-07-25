@@ -1,6 +1,7 @@
 = logical_model
 
-LogicalModel allows to use a resource as a model.
+LogicalModel allows to use a restfull resources as models.
+It was written following this tutorial: http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3
 
 == Contributing to logical_model
  
