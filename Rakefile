@@ -21,6 +21,9 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{LogicalModel allows to use a resource as a model. It is based on web presentation xxx}
   gem.email = "dwaynemac@gmail.com"
   gem.authors = ["Dwayne Macgowan"]
+  gem.add_dependency "rails", ">= 3.0.7"
+  gem.add_dependency "typhoeus", "0.2.4"
+  gem.add_dependency "will_paginate", "3.0.pre2"
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
