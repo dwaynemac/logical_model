@@ -1,6 +1,7 @@
 = logical_model
 
 LogicalModel allows to use a restfull resources as models.
+
 It was written following this tutorial: http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3
 
 == Contributing to logical_model
@@ -18,3 +19,6 @@ It was written following this tutorial: http://www.slideshare.net/ihower/service
 Copyright (c) 2011 Dwayne Macgowan. See LICENSE.txt for
 further details.
 
+=== TODO
+
+* specs!
