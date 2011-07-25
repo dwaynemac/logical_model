@@ -22,5 +22,5 @@ further details.
 === TODO
 
 * specs!
-* remove rails dependency
 * put log in /log
+* on create parse response and show errors, etc.
