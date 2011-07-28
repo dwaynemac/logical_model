@@ -247,7 +247,8 @@ class LogicalModel
     end
   end
 
-  # Updates Objects attributes.
+  # Updates Objects attributes, this will only send attributes passed as arguments
+  # 
   #
   # Returns false if Object#valid? is false.
   # Returns updated object if successfull.
@@ -256,6 +257,35 @@ class LogicalModel
   # Usage:
   #   @person.update(params[:person])
   def update(attributes)
+    self.attributes = attributes
+
+    return false unless valid?
+
+    sending_params = attributes
+    sending_params.delete(:id)
+
+    params = { self.class.to_s.underscore => sending_params }
+    params = self.class.merge_key(params)
+    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params )
+    if response.code == 200
+      log_ok(response)
+      return self
+    else
+      log_failed(response)
+      return nil
+    end
+  end
+
+  # Saves Objects attributes
+  # 
+  #
+  # Returns false if Object#valid? is false.
+  # Returns updated object if successfull.
+  # Returns nil if update failed
+  #
+  # Usage:
+  #   @person.save
+  def save
     self.attributes = attributes
 
     return false unless valid?
