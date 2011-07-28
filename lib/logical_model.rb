@@ -256,18 +256,25 @@ class LogicalModel
   # Usage:
   #   @person.update(params[:person])
   def update(attributes)
+    
+    raise ArgumentError, "can't edit id" if attributes[:id]
 
+    backup_attributes = self.attributes
     self.attributes = attributes
 
     return false unless valid?
 
-    params = { self.class.to_s.underscore => self.attributes }
+    sending_params = self.attributes
+    sending_params.delete(:id)
+
+    params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
     response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params )
     if response.code == 200
       log_ok(response)
       return self
     else
+      self.attributes = backup_attributes
       log_failed(response)
       return nil
     end
