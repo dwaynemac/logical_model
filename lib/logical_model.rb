@@ -235,7 +235,7 @@ class LogicalModel
     return false unless valid?
 
     params = self.attributes
-    params = self.merge_key(params)
+    params = self.class.merge_key(params)
 
     response = Typhoeus::Request.post( self.resource_uri, :params => params )
     if response.code == 201
@@ -262,7 +262,7 @@ class LogicalModel
     return false unless valid?
 
     params = { self.class.to_s.underscore => self.attributes }
-    params = self.merge_key(params)
+    params = self.class.merge_key(params)
     response = Typhoeus::Request.put( self.resource_uri(id), :params => params )
     if response.code == 200
       log_ok(response)
