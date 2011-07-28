@@ -256,10 +256,6 @@ class LogicalModel
   # Usage:
   #   @person.update(params[:person])
   def update(attributes)
-    
-    raise ArgumentError, "can't edit id" if attributes[:id]
-
-    backup_attributes = self.attributes
     self.attributes = attributes
 
     return false unless valid?
@@ -274,7 +270,6 @@ class LogicalModel
       log_ok(response)
       return self
     else
-      self.attributes = backup_attributes
       log_failed(response)
       return nil
     end
