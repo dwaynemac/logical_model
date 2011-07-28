@@ -295,18 +295,26 @@ class LogicalModel
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
 
+
+    e = Typhoeus::Easy.new
+    e.url = self.class.resource_uri(id)
+    e.method = :put
+    e.params = params
+
     response = nil
     Timeout::timeout(self.class.timeout/1000) do
-      response = Typhoeus::Request.put( self.class.resource_uri(id),
-                                     :params => params,
-                                     :timeout => self.class.timeout)
+      # using Typhoeus::Easy avoids PUT hang issue: https://github.com/dbalatero/typhoeus/issues/69
+      e.perform
     end
 
-    if response.code == 200
-      log_ok(response)
+    if e.response_code == 200
+      self.class.logger.info("LogicalModel Log: #{e.response_code} #{e.url} in #{e.total_time_taken}s")
+      self.class.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
       return self
     else
-      log_failed(response)
+      msg = "LogicalModel Log: #{e.response_code} #{e.url} in #{e.total_time_taken}s FAILED"
+      self.logger.warn(msg)
+      self.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
       return nil
     end
 
