@@ -272,17 +272,24 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
-    response = Typhoeus::Request.put( self.class.resource_uri(id),
-                                      :params => params,
-                                      :timeout => self.class.timeout
-                                    )
-    if response.code == 200
-      log_ok(response)
-      return self
-    else
-      log_failed(response)
-      return nil
+    request = Typhoeus::Request.new( self.class.resource_uri(id),
+                                     :method => :put,
+                                     :params => params,
+                                     :timeout => self.class.timeout)
+    result = nil
+    request.on_complete do |response|
+      if response.code == 200
+        log_ok(response)
+        result = self
+      else
+        log_failed(response)
+      end
     end
+
+    self.class.hydra.queue(request)
+    self.class.hydra.run
+
+    return result
   end
 
   # Saves Objects attributes
