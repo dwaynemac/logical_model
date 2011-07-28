@@ -56,8 +56,14 @@ class LogicalModel
     @attribute_keys
   end
 
+  DEFAULT_TIMEOUT = 30000
+
   class << self
-    attr_accessor :host, :hydra, :resource_path, :use_ssl, :use_api_key, :api_key, :api_key_name, :log_path
+    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name
+    attr_accessor_with_default :timeout, DEFAULT_TIMEOUT
+    attr_accessor_with_default :use_ssl, false
+    attr_accessor_with_default :log_path, "log/logical_model.log"
+    attr_accessor_with_default :use_api_key, false
 
     # host eg: "127.0.0.1:3010"
     # resource_path eg: "/api/v1/people"
@@ -120,8 +126,7 @@ class LogicalModel
     if defined?(Rails)
       Rails.logger
     else
-      path = self.log_path.nil?? "log.log" : self.log_path
-      Logger.new(path)
+      Logger.new(self.log_path)
     end
   end
 
@@ -237,7 +242,7 @@ class LogicalModel
     params = self.attributes
     params = self.class.merge_key(params)
 
-    response = Typhoeus::Request.post( self.class.resource_uri, :params => params )
+    response = Typhoeus::Request.post( self.class.resource_uri, :params => params, :timeout => self.timeout )
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
@@ -266,7 +271,10 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
-    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params )
+    response = Typhoeus::Request.put( self.class.resource_uri(id),
+                                      :params => params,
+                                      :timeout => self.timeout
+                                    )
     if response.code == 200
       log_ok(response)
       return self
@@ -295,7 +303,7 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
-    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params )
+    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params, :timeout => self.timeout )
     if response.code == 200
       log_ok(response)
       return self
@@ -315,7 +323,10 @@ class LogicalModel
 
     params = self.merge_key
 
-    response = Typhoeus::Request.delete( self.resource_uri(id), :params => params )
+    response = Typhoeus::Request.delete( self.resource_uri(id),
+                                         :params => params,
+                                         :timeout => self.timeout
+                                       )
     if response == 200
       log_ok(response)
       return self
