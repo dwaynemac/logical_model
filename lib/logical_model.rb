@@ -261,7 +261,7 @@ class LogicalModel
 
     return false unless valid?
 
-    params = { :self.class.underscore => self.attributes }
+    params = { self.class.underscore => self.attributes }
     params = self.merge_key(params)
     response = Typhoeus::Request.put( self.resource_uri(id), :params => params )
     if response.code == 200
