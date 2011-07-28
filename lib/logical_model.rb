@@ -59,11 +59,12 @@ class LogicalModel
   DEFAULT_TIMEOUT = 30000
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name
-    attr_accessor_with_default :timeout, DEFAULT_TIMEOUT
-    attr_accessor_with_default :use_ssl, false
-    attr_accessor_with_default :log_path, "log/logical_model.log"
-    attr_accessor_with_default :use_api_key, false
+    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout, :use_ssl, :log_path, :use_api_key
+
+    def timeout; @timeout ||= DEFAULT_TIMEOUT; end
+    def use_ssl; @use_ssl ||= false; end
+    def log_path; @log_path ||= "log/logical_model.log"; end
+    def use_api_key; @use_api_key ||= false; end
 
     # host eg: "127.0.0.1:3010"
     # resource_path eg: "/api/v1/people"
