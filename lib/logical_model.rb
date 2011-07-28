@@ -237,7 +237,7 @@ class LogicalModel
     params = self.attributes
     params = self.class.merge_key(params)
 
-    response = Typhoeus::Request.post( self.resource_uri, :params => params )
+    response = Typhoeus::Request.post( self.class.resource_uri, :params => params )
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
@@ -263,7 +263,7 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => self.attributes }
     params = self.class.merge_key(params)
-    response = Typhoeus::Request.put( self.resource_uri(id), :params => params )
+    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params )
     if response.code == 200
       log_ok(response)
       return self
