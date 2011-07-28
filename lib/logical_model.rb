@@ -1,3 +1,4 @@
+require 'timeout'
 require 'active_model'
 require 'typhoeus'
 require 'active_support' # todo migrate to yajl
@@ -56,7 +57,7 @@ class LogicalModel
     @attribute_keys
   end
 
-  DEFAULT_TIMEOUT = 30000
+  DEFAULT_TIMEOUT = 10000
 
   class << self
     attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout, :use_ssl, :log_path, :use_api_key
@@ -69,6 +70,8 @@ class LogicalModel
     # host eg: "127.0.0.1:3010"
     # resource_path eg: "/api/v1/people"
   end
+
+
 
   def self.resource_uri(id=nil)
     prefix = (use_ssl)? "https://" : "http://"
@@ -112,8 +115,11 @@ class LogicalModel
   end
 
   def self.log_failed(response)
-    # error_message = ActiveSupport::JSON.decode(response.body)["message"]
-    error_message = "error"
+    begin
+      error_message = ActiveSupport::JSON.decode(response.body)["message"]
+    rescue => e
+      error_message = "error"
+    end
     msg = "LogicalModel Log: #{response.code} #{response.request.url} in #{response.time}s FAILED: #{error_message}"
     self.logger.warn(msg)
     self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
@@ -190,8 +196,13 @@ class LogicalModel
   def self.paginate(options={})
     result = nil
     async_paginate(options){|i| result = i}
-    self.hydra.run
+    Timeout::timeout(self.timeout/1000) do
+      self.hydra.run
+    end
     result
+  rescue Timeout::Error
+    self.logger.warn("timeout")
+    return nil
   end
 
   # Asynchronic Find
@@ -222,8 +233,13 @@ class LogicalModel
   def self.find(id)
     result = nil
     async_find(id){|i| result = i}
-    self.hydra.run
+    Timeout::timeout(self.timeout/1000) do
+      self.hydra.run
+    end
     result
+  rescue Timeout::Error
+    self.logger.warn("timeout")
+    return nil
   end
 
   #
@@ -243,7 +259,10 @@ class LogicalModel
     params = self.attributes
     params = self.class.merge_key(params)
 
-    response = Typhoeus::Request.post( self.class.resource_uri, :params => params, :timeout => self.class.timeout )
+    response = nil
+    Timeout::timeout(self.class.timeout/1000) do
+      response = Typhoeus::Request.post( self.class.resource_uri, :params => params, :timeout => self.class.timeout )
+    end
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
@@ -251,6 +270,9 @@ class LogicalModel
       log_failed(response)
       return nil
     end
+  rescue Timeout::Error
+    self.class.logger.warn "timeout"
+    return nil
   end
 
   # Updates Objects attributes, this will only send attributes passed as arguments
@@ -272,24 +294,25 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
-    request = Typhoeus::Request.new( self.class.resource_uri(id),
-                                     :method => :put,
+
+    response = nil
+    Timeout::timeout(self.class.timeout/1000) do
+      response = Typhoeus::Request.put( self.class.resource_uri(id),
                                      :params => params,
                                      :timeout => self.class.timeout)
-    result = nil
-    request.on_complete do |response|
-      if response.code == 200
-        log_ok(response)
-        result = self
-      else
-        log_failed(response)
-      end
     end
 
-    self.class.hydra.queue(request)
-    self.class.hydra.run
+    if response.code == 200
+      log_ok(response)
+      return self
+    else
+      log_failed(response)
+      return nil
+    end
 
-    return result
+  rescue Timeout::Error
+    self.class.logger.warn("request timed out")
+    return nil
   end
 
   # Saves Objects attributes
@@ -311,7 +334,10 @@ class LogicalModel
 
     params = { self.class.to_s.underscore => sending_params }
     params = self.class.merge_key(params)
-    response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params, :timeout => self.class.timeout )
+    response = nil
+    Timeout::timeout(self.class.timeout/1000) do
+      response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params, :timeout => self.class.timeout )
+    end
     if response.code == 200
       log_ok(response)
       return self
@@ -319,6 +345,9 @@ class LogicalModel
       log_failed(response)
       return nil
     end
+  rescue Timeout::Error
+    self.class.logger.warn "timeout"
+    return nil
   end
 
   # Deletes Object#id
@@ -331,10 +360,13 @@ class LogicalModel
 
     params = self.merge_key
 
-    response = Typhoeus::Request.delete( self.resource_uri(id),
+    response = nil
+    Timeout::timeout(self.timeout/1000) do
+      response = Typhoeus::Request.delete( self.resource_uri(id),
                                          :params => params,
                                          :timeout => self.class.timeout
                                        )
+    end
     if response == 200
       log_ok(response)
       return self
@@ -342,6 +374,9 @@ class LogicalModel
       log_failed(response)
       return nil
     end
+  rescue Timeout::Error
+    self.logger.warn "timeout"
+    return nil
   end
 
   # Destroy object
