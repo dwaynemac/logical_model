@@ -313,8 +313,8 @@ class LogicalModel
       return self
     else
       msg = "LogicalModel Log: #{e.response_code} #{e.url} in #{e.total_time_taken}s FAILED"
-      self.logger.warn(msg)
-      self.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
+      self.class.logger.warn(msg)
+      self.class.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
       return nil
     end
 
