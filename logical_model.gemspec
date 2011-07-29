@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{logical_model}
-  s.version = "0.1.9"
+  s.version = "0.1.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Dwayne Macgowan}]
-  s.date = %q{2011-07-28}
+  s.date = %q{2011-07-29}
   s.description = %q{LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3}
   s.email = %q{dwaynemac@gmail.com}
   s.extra_rdoc_files = [
