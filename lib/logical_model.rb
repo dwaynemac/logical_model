@@ -3,6 +3,7 @@ require 'active_model'
 require 'typhoeus'
 require 'active_support' # todo migrate to yajl
 require 'logger'
+require 'kaminari'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
 #
@@ -180,9 +181,7 @@ class LogicalModel
         result_set = self.from_json(response.body)
 
         # this paginate is will_paginate's Array pagination
-        collection = result_set[:collection].paginate(:page => options[:page],
-                                                      :total_entries => result_set[:total],
-                                                      :per_page => options[:per_page])
+        collection = Kaminari.paginate_array(result_set[:collection]).page(options[:page]).per(options[:per_page])
 
         yield collection
       else
