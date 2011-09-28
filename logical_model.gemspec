@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{logical_model}
-  s.version = "0.2.0"
+  s.name = "logical_model"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Dwayne Macgowan}]
-  s.date = %q{2011-09-09}
-  s.description = %q{LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3}
-  s.email = %q{dwaynemac@gmail.com}
+  s.authors = ["Dwayne Macgowan"]
+  s.date = "2011-09-28"
+  s.description = "LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3"
+  s.email = "dwaynemac@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -29,11 +29,11 @@ Gem::Specification.new do |s|
     "test/helper.rb",
     "test/test_logical_model.rb"
   ]
-  s.homepage = %q{http://github.com/dwaynemac/logical_model}
-  s.licenses = [%q{MIT}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.8}
-  s.summary = %q{LogicalModel allows to use a resource as a model.}
+  s.homepage = "http://github.com/dwaynemac/logical_model"
+  s.licenses = ["MIT"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = "1.8.10"
+  s.summary = "LogicalModel allows to use a resource as a model."
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
