@@ -209,11 +209,13 @@ class LogicalModel
   #
   # Parameters:
   #   - id, id of object to find
+  # @param [String/Integer] id
+  # @param [Hash] params
   #
   # Usage:
   #   Person.async_find(params[:id])
-  def self.async_find(id)
-    params = self.merge_key
+  def self.async_find(id, params = {})
+    params = self.merge_key(params)
     request = Typhoeus::Request.new( resource_uri(id), :params => params )
 
     request.on_complete do |response|
