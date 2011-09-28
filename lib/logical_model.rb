@@ -231,9 +231,9 @@ class LogicalModel
   end
 
   # synchronic find
-  def self.find(id)
+  def self.find(id, params = {})
     result = nil
-    async_find(id){|i| result = i}
+    async_find(id, params){|i| result = i}
     Timeout::timeout(self.timeout/1000) do
       self.hydra.run
     end
