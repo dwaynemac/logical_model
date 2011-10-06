@@ -61,7 +61,7 @@ class LogicalModel
   DEFAULT_TIMEOUT = 10000
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout, :use_ssl, :log_path, :use_api_key
+    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout, :use_ssl, :log_path, :use_api_key, :json_root
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def use_ssl; @use_ssl ||= false; end
@@ -72,6 +72,9 @@ class LogicalModel
     # resource_path eg: "/api/v1/people"
   end
 
+  def json_root
+    @json_root ||= self.class.to_s.underscore
+  end
 
 
   def self.resource_uri(id=nil)
@@ -257,7 +260,7 @@ class LogicalModel
   def create
     return false unless valid?
 
-    params = self.attributes
+    params = { self.json_root => self.attributes }
     params = self.class.merge_key(params)
 
     response = nil
@@ -293,7 +296,7 @@ class LogicalModel
     sending_params = attributes
     sending_params.delete(:id)
 
-    params = { self.class.to_s.underscore => sending_params }
+    params = { self.json_root => sending_params }
     params = self.class.merge_key(params)
 
 
@@ -341,7 +344,7 @@ class LogicalModel
     sending_params = self.attributes
     sending_params.delete(:id)
 
-    params = { self.class.to_s.underscore => sending_params }
+    params = { self.json_root => sending_params }
     params = self.class.merge_key(params)
     response = nil
     Timeout::timeout(self.class.timeout/1000) do
