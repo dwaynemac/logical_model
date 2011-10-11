@@ -255,12 +255,12 @@ class LogicalModel
   #   - created model ID if successfull
   #
   # Usage:
-  #   @person = Person.new(parmas[:person])
-  #   @person.create
-  def create
+  #   @person = Person.new(params[:person])
+  #   @person.create( non_attribute_param: "value" )
+  def create(params = {})
     return false unless valid?
 
-    params = { self.json_root => self.attributes }
+    params = { self.json_root => self.attributes }.merge(params)
     params = self.class.merge_key(params)
 
     response = nil
