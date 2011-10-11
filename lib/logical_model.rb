@@ -17,6 +17,7 @@ require 'kaminari'
 #   api_key_name: api key parameter name. eg: app_key
 #   api_key: api_key. eg: "asd32fa4s4pdf35tr"
 #   log_path: Path to log file. Will be ignored if using Rails.
+#   json_root: TODO doc
 #
 # You may use validations such as validates_presence_of, etc.
 #
