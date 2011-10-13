@@ -4,6 +4,17 @@ LogicalModel allows to use a restfull resources as models.
 
 It was written following this tutorial: http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3
 
+== Assumptions
+
+LogicalModel makes some assumptions about the service you'll be consuming
+
+# TODO
+
+* it is RESTfull
+* Create response on success is
+    {}
+* Create response on failure is
+
 == Usage
 
 In your Gemfile:

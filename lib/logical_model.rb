@@ -272,6 +272,7 @@ class LogicalModel
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
     else
       log_failed(response)
+      self.errors = ActiveSupport::JSON.decode(response.body)["errors"]
       return nil
     end
   rescue Timeout::Error
