@@ -17,6 +17,7 @@ require 'kaminari'
 #   api_key_name: api key parameter name. eg: app_key
 #   api_key: api_key. eg: "asd32fa4s4pdf35tr"
 #   log_path: Path to log file. Will be ignored if using Rails.
+#   json_root: TODO doc
 #
 # You may use validations such as validates_presence_of, etc.
 #
@@ -250,11 +251,11 @@ class LogicalModel
   # creates model.
   #
   # returns:
-  #   - false if model invalid
-  #   - nil if there was a connection problem
-  #   - created model ID if successfull
+  # @return false if model invalid
+  # @return nil if there was a connection problem
+  # @return created model ID if successfull
   #
-  # Usage:
+  # @example Usage:
   #   @person = Person.new(params[:person])
   #   @person.create( non_attribute_param: "value" )
   def create(params = {})
@@ -270,6 +271,13 @@ class LogicalModel
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
+    elsif response.code == 400
+      log_failed(response)
+      ws_errors = ActiveSupport::JSON.decode(response.body)["errors"]
+      ws_errors.each_key do |k|
+        self.errors.add k, ws_errors[k]
+      end
+      return false
     else
       log_failed(response)
       return nil
