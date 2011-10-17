@@ -384,7 +384,7 @@ class LogicalModel
     Timeout::timeout(self.timeout/1000) do
       response = Typhoeus::Request.delete( self.resource_uri(id),
                                          :params => params,
-                                         :timeout => self.class.timeout
+                                         :timeout => self.timeout
                                        )
     end
     if response == 200
