@@ -374,11 +374,14 @@ class LogicalModel
   #
   # Returns nil if delete failed
   #
+  # @param [String] id - id of contact to be deleted
+  # @param [Hash] params - other params to be sent to WS on request
+  #
   # Usage:
   #   Person.delete(params[:id])
-  def self.delete(id)
+  def self.delete(id, params={})
 
-    params = self.merge_key
+    params = self.merge_key(params)
 
     response = nil
     Timeout::timeout(self.timeout/1000) do
@@ -403,8 +406,8 @@ class LogicalModel
   #
   # Usage:
   #   @person.destroy
-  def destroy
-    self.class.delete(self.id)
+  def destroy(params={})
+    self.class.delete(self.id,params)
   end
 
 end
