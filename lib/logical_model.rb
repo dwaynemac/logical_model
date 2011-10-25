@@ -92,11 +92,28 @@ class LogicalModel
     self.attributes = attributes
   end
 
+  def self.has_many_keys=(keys)
+    @has_many_keys = keys
+    attr_accessor *keys
+  end
+
+  def self.has_many_keys
+    @has_many_keys
+  end
+
   def attributes
-    self.class.attribute_keys.inject(ActiveSupport::HashWithIndifferentAccess.new) do |result,key|
+    attrs = self.class.attribute_keys.inject(ActiveSupport::HashWithIndifferentAccess.new) do |result,key|
       result[key] = read_attribute_for_validation(key)
       result
     end
+
+    unless self.class.has_many_keys.blank?
+      self.class.has_many_keys.inject(attrs) do |result,key|
+        result[key] = send(key).map {|a| a.attributes}
+        result
+      end
+    end
+    attrs
   end
 
   def attributes=(attrs)
