@@ -1,7 +1,15 @@
 # encoding: utf-8
 
 require 'rubygems'
+gem 'activerecord', "=3.0.7"
+require 'active_record'
+require 'logger'
 require 'bundler'
+gem 'sqlite3'
+require 'sqlite3'
+require 'yaml'
+#require 'active_support'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -50,4 +58,19 @@ Rake::RDocTask.new do |rdoc|
   rdoc.title = "logical_model #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+desc "Load the environment"
+  task :environment do
+    env = ENV["SINATRA_ENV"] || "development"
+    databases = YAML.load_file("config/database.yml")
+    ActiveRecord::Base.establish_connection(databases[env])
+  end
+namespace :db do
+  desc "Migrate the database"
+  task(:migrate => :environment) do
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+    ActiveRecord::Migration.verbose = true
+    ActiveRecord::Migrator.migrate("db/migrate")
+  end
 end
