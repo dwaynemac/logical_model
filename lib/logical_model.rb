@@ -92,11 +92,28 @@ class LogicalModel
     self.attributes = attributes
   end
 
+  def self.has_many_keys=(keys)
+    @has_many_keys = keys
+    attr_accessor *keys
+  end
+
+  def self.has_many_keys
+    @has_many_keys
+  end
+
   def attributes
-    self.class.attribute_keys.inject(ActiveSupport::HashWithIndifferentAccess.new) do |result,key|
+    attrs = self.class.attribute_keys.inject(ActiveSupport::HashWithIndifferentAccess.new) do |result,key|
       result[key] = read_attribute_for_validation(key)
       result
     end
+
+    unless self.class.has_many_keys.blank?
+      self.class.has_many_keys.inject(attrs) do |result,key|
+        result[key] = send(key).map {|a| a.attributes}
+        result
+      end
+    end
+    attrs
   end
 
   def attributes=(attrs)
@@ -372,17 +389,20 @@ class LogicalModel
   #
   # Returns nil if delete failed
   #
+  # @param [String] id - id of contact to be deleted
+  # @param [Hash] params - other params to be sent to WS on request
+  #
   # Usage:
   #   Person.delete(params[:id])
-  def self.delete(id)
+  def self.delete(id, params={})
 
-    params = self.merge_key
+    params = self.merge_key(params)
 
     response = nil
     Timeout::timeout(self.timeout/1000) do
       response = Typhoeus::Request.delete( self.resource_uri(id),
                                          :params => params,
-                                         :timeout => self.class.timeout
+                                         :timeout => self.timeout
                                        )
     end
     if response == 200
@@ -401,8 +421,8 @@ class LogicalModel
   #
   # Usage:
   #   @person.destroy
-  def destroy
-    self.class.delete(self.id)
+  def destroy(params={})
+    self.class.delete(self.id,params)
   end
 
 end
