@@ -48,3 +48,5 @@ pkg
 #*.rbc
 .rvmrc
 .idea/
+.project
+Gemfile.lock
