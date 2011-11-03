@@ -1,7 +1,7 @@
 require 'timeout'
 require 'active_model'
 require 'typhoeus'
-require 'active_support' # todo migrate to yajl
+require 'active_support/all' # todo migrate to yajl
 require 'logger'
 require 'kaminari'
 
@@ -135,11 +135,7 @@ class LogicalModel
   end
 
   def self.logger
-    if defined?(Rails)
-      Rails.logger
-    else
-      Logger.new(self.log_path)
-    end
+    Logger.new(self.log_path || "log/logical_model.log")
   end
 
   # if needed willmerge api_key into given hash
@@ -157,6 +153,8 @@ class LogicalModel
   #  They assume we are using a RESTfull API.
   #  for get, put, delete :id is expected
   #  for post, put attributes are excepted under class_name directly. eg. put( {:id => 1, :class_name => {:attr => "new value for attr"}} )
+  #
+  #  On error (400) a "errors" is expected.
   #  ============================================================================================================
 
   # Asynchronic Pagination
