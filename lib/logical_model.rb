@@ -109,11 +109,11 @@ class LogicalModel
 
     unless self.class.has_many_keys.blank?
       self.class.has_many_keys.inject(attrs) do |result,key|
-        result[key] = send(key).map {|a| a.attributes}
+        result["#{key}_attributes"] = send(key).map {|a| a.attributes}
         result
       end
     end
-    attrs
+    attrs.reject {|key, value| key == "_id" && value.blank?}
   end
 
   def attributes=(attrs)
