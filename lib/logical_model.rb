@@ -311,20 +311,17 @@ class LogicalModel
   #
   # Usage:
   #   @person.update(params[:person])
-  def update(attributes)
-    self.attributes = attributes
+  def update(attribute_params)
+
+    self.attributes = attribute_params[self.json_root]
 
     return false unless valid?
 
-    sending_params = attributes
-    sending_params.delete(:id)
-
-    params = { self.json_root => sending_params }
-    params = self.class.merge_key(params)
-
+    params = self.class.merge_key(attribute_params)
 
     e = Typhoeus::Easy.new
-    e.url = self.class.resource_uri(id)
+
+    e.url = self.class.resource_uri(_id)
     e.method = :put
     e.params = params
 
