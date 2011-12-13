@@ -69,6 +69,18 @@ class LogicalModel
     def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
 
+    def validates_associated(*associations)
+      associations.each do |association|
+        validates_each association do |record, attr, value|
+          unless value.collect{ |r| r.nil? || r.valid? }.all?
+            value.reject { |t| t.valid? }.each do |t|
+              record.errors.add("", "#{t.class.name} #{t.errors.full_messages.to_sentence}")
+            end
+          end
+        end
+      end
+    end
+
     # host eg: "127.0.0.1:3010"
     # resource_path eg: "/api/v1/people"
   end
@@ -77,15 +89,10 @@ class LogicalModel
     @json_root ||= self.class.to_s.underscore
   end
 
-
   def self.resource_uri(id=nil)
     prefix = (use_ssl)? "https://" : "http://"
     sufix  = (id.nil?)? "" : "/#{id}"
     "#{prefix}#{host}#{resource_path}#{sufix}"
-  end
-
-  def persisted?
-    false
   end
 
   def initialize(attributes={})
@@ -95,6 +102,61 @@ class LogicalModel
   def self.has_many_keys=(keys)
     @has_many_keys = keys
     attr_accessor *keys
+
+    keys.each do |association|
+
+      # return empty array or @association variable for each association
+      define_method association do
+        if instance_variable_get("@#{association}").blank?
+          instance_variable_set("@#{association}", [])
+        end
+
+        instance_variable_get("@#{association}")
+      end
+
+      # this method loads the contact attributes recieved by logical model from the service
+      define_method "#{association}=" do |params|
+        collection = []
+        params.each do |attr_params|
+          if attr_params["_type"].present?
+            attr_class = attr_params.delete("_type").to_s.constantize
+          else
+            attr_class = association.to_s.camelize.constantize
+          end
+          collection << attr_class.new(attr_params)
+        end
+        instance_variable_set("@#{association}", collection)
+      end
+
+      define_method "new_#{association.to_s.singularize}" do |attr_params|
+        if attr_params["_type"].present?
+          clazz = attr_params.delete(:_type).constantize
+        else
+          clazz = association.to_s.singularize.camelize.constantize
+        end
+
+        return unless clazz
+
+        temp_object = clazz.new(attr_params.merge({"#{self.json_root}_id" => self.id}))
+        eval(association.to_s) << temp_object
+        temp_object
+      end
+
+      # this method loads the contact attributes from the html form (using nested resources conventions)
+      define_method "#{association}_attributes=" do |key_attributes|
+          array = []
+          key_attributes.each do |attr_params|
+            attr_params.to_hash.symbolize_keys!
+            if attr_params["_type"].present?
+              attr_class = attr_params.delete("_type").to_s.constantize
+            else
+              attr_class = association.to_s.singularize.camelize.constantize
+            end
+            array << attr_class.new(attr_params)
+          end
+          instance_variable_set("@#{association}", array)
+      end
+    end
   end
 
   def self.has_many_keys
@@ -420,6 +482,18 @@ class LogicalModel
   #   @person.destroy
   def destroy(params={})
     self.class.delete(self.id,params)
+  end
+
+  def persisted?
+    false
+  end
+
+  # Returns true if a record has not been persisted yet.
+  #
+  # Usage:
+  # @person.new_record?
+  def new_record?
+    !self.persisted?
   end
 
 end
