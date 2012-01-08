@@ -51,3 +51,4 @@ pkg
 .project
 Gemfile.lock
 db/*
+logs/*

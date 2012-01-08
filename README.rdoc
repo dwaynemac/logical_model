@@ -30,6 +30,10 @@ For runnings specs you must have the service running locally. Do like this:
 Also note that after a single run of the tests the server must be restarted to reset
 the database. We could change this by deleting all users in the test setup.
 
+To run spec:
+
+    bundle exec rspec spec/client_spec.rb
+
 
 == Contributing to logical_model
  

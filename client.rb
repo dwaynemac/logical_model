@@ -2,7 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'typhoeus'
 require 'json'
-require 'lib/logical_model'
+require './lib/logical_model'
 
 class User < LogicalModel
   #class << self; attr_accessor :base_uri end
