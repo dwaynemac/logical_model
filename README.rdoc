@@ -19,7 +19,17 @@ LogicalModel makes some assumptions about the service you'll be consuming
 
 In your Gemfile:
 
-gem "logical_model"
+    gem "logical_model"
+
+== Testing
+
+For runnings specs you must have the service running locally. Do like this:
+
+    ruby service.rb -p 3000 -e test
+
+Also note that after a single run of the tests the server must be restarted to reset
+the database. We could change this by deleting all users in the test setup.
+
 
 == Contributing to logical_model
  
@@ -33,11 +43,10 @@ gem "logical_model"
 
 == Copyright
 
-Copyright (c) 2011 Dwayne Macgowan. See LICENSE.txt for
+Copyright (c) 2011,2012 Dwayne Macgowan. See LICENSE.txt for
 further details.
 
 === TODO
 
-* specs!
 * put log in /log
 * on create parse response and show errors, etc.
