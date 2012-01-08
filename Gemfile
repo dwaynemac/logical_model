@@ -7,6 +7,7 @@ gem "typhoeus", "~> 0.2.4"
 gem "kaminari"
 
 group :development, :test do
+  gem 'activerecord' # for testapp
   gem "shoulda"
   gem "bundler", "~> 1.0.10"
   gem "jeweler", "~> 1.6.4"

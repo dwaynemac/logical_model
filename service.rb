@@ -2,7 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'active_record'
 require 'sinatra'
-require 'models/user'
+require './models/user'
 
 # setting up the environment
 env_index = ARGV.index("-e")

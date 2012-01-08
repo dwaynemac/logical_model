@@ -112,6 +112,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemodel
+  activerecord
   activesupport
   bundler (~> 1.0.10)
   guard-rspec
