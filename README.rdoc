@@ -8,12 +8,42 @@ It was written following this tutorial: http://www.slideshare.net/ihower/service
 
 LogicalModel makes some assumptions about the service you'll be consuming
 
-# TODO
+* resource service is RESTfull
+* INDEX response is
+    {
+      collection: [resources...],
+      total:      total items
+    }
 
-* it is RESTfull
-* Create response on success is
-    {}
-* Create response on failure is
+* SHOW response is
+    {
+      .... resource attributes ...
+    }
+
+* CREATE response on success is
+    {
+      id: created_id
+    }
+
+* CREATE response on failure is
+    {
+      message: 'error message',
+      error_codes: [],
+      errors: attribute_errors
+    }
+
+* UPDATE response on success is
+    "OK"
+
+* UPDATE response on failure is
+    {
+      message: 'error message',
+      error_codes: [],
+      errors: attribute_errors
+    }
+
+* DESTROY response is
+    "ok"
 
 == Usage
 

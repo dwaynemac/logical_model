@@ -22,7 +22,22 @@ describe "v1 service: " do
   before(:each) do
     User.delete_all
   end
-  
+
+  describe "get /api/v1/users" do
+    before do
+      User.create(name: "dwayne", email: "dwaynemac@gmail.com", password: "asdf", bio: "test")
+      User.create(name: "2dwayne", email: "dw2aynemac@gmail.com", password: "a2sdf", bio: "te2st")
+      get '/api/v1/users'
+    end
+    it { should respond_with :success }
+    it "should send collection" do
+      ActiveSupport::JSON.decode(last_response.body)['collection'].should_not be_nil
+    end
+    it "should send total items number" do
+      AcriveSupport::JSON.decode(last_response.body)['total'].should == 2
+    end
+  end
+
   describe "RESTfull GET (on /api/v1/users/:id)" do
     context "for existing user" do
       before(:each) do

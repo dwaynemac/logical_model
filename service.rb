@@ -17,12 +17,16 @@ if env == "test"
   User.create(:name => "paul", :email => "paul@pauldix.net", :bio => "rubyist")
 end
 
-
-
 # Simple RESTfull Service
 # for LogicalModel Testing
 
+# index
+# Responds { collection, total }
+get 'api/v1/users' do
+  users = User.all
 
+  { collection: users, total: users.count}.to_json
+end
 
 # HTTP entry points
 # get a user by name
@@ -40,7 +44,7 @@ post '/api/v1/users' do
   begin
     user = User.new(params[:user])
     if user.save
-      user.to_json
+      [201, {id: user.id}.to_json]
     else
       error 400, {:errors => user.errors}.to_json
     end

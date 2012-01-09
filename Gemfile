@@ -4,7 +4,7 @@ source "http://rubygems.org"
 gem "activemodel"
 gem "activesupport"
 gem "typhoeus", "~> 0.2.4"
-gem "kaminari"
+gem "kaminari", '~> 0.13.0'
 
 group :development, :test do
   gem 'activerecord' # for testapp
