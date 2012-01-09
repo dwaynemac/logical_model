@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require 'rubygems'
-gem 'activerecord', "=3.0.7"
+gem 'activerecord'
 require 'active_record'
 require 'logger'
 require 'bundler'
