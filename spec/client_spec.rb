@@ -39,7 +39,7 @@ describe "LogicalModel User client" do
           collection: [{name:'a',email:'a@m'},
                        {name:'b',email:'b@m'},
                        {name:'c',email:'c@m'}],
-          total: 3
+          total: 6
         }.to_json,
         request: mock(url:"mockedurl"),
         time: 1234
@@ -53,7 +53,7 @@ describe "LogicalModel User client" do
       @users.should be_a(Kaminari::PaginatableArray)
     end
     it "should set total_count" do
-      @users.total_count.should == 3
+      @users.total_count.should == 6
     end
   end
   

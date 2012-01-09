@@ -240,7 +240,7 @@ class LogicalModel
   #  This pagination won't block excecution waiting for result, pagination will be enqueued in Objectr#hydra.
   #
   # Parameters:
-  #   - options hash.
+  #   @param options [Hash].
   #   Valid options are:
   #   * :page - indicated what page to return. Defaults to 1.
   #   * :per_page - indicates how many records to be returned per page. Defauls to 20
@@ -249,8 +249,8 @@ class LogicalModel
   # Usage:
   #   Person.async_paginate(:page => params[:page]){|i| result = i}
   def self.async_paginate(options={})
-    options[:page] ||= 1
-    options[:per_page] ||= 20
+    page = options[:page] || 1
+    per_page = options[:per_page] || 20
 
     options = self.merge_key(options)
 
@@ -262,7 +262,14 @@ class LogicalModel
         result_set = self.from_json(response.body)
 
         # this paginate is will_paginate's Array pagination
-        collection = Kaminari.paginate_array(result_set[:collection]).page(options[:page]).per(options[:per_page])
+        collection = Kaminari.paginate_array(
+                                             result_set[:collection],
+                                             {
+                                               :total_count=>result_set[:total],
+                                               :limit => per_page,
+                                               :offset => per_page * ([page, 1].max - 1)
+                                             }
+                                            )
 
         yield collection
       else
@@ -365,7 +372,7 @@ class LogicalModel
   end
 
   # Updates Objects attributes, this will only send attributes passed as arguments
-  # 
+  #
   #
   # Returns false if Object#valid? is false.
   # Returns updated object if successfull.
@@ -410,7 +417,7 @@ class LogicalModel
   end
 
   # Saves Objects attributes
-  # 
+  #
   #
   # Returns false if Object#valid? is false.
   # Returns updated object if successfull.
