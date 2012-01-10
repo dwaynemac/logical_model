@@ -1,5 +1,8 @@
 require File.dirname(__FILE__) + '/../client'
 
+require File.dirname(__FILE__) + '/../test/typhoeus_mocks.rb'
+include TyphoeusMocks
+
 # NOTE: to run these specs you must have the service running locally. Do like this:
 # ruby service.rb -p 3000 -e test
 
@@ -10,6 +13,7 @@ describe "LogicalModel User client" do
   describe "#create" do
     context "with valid attributes" do
       before(:each) do
+        # TODO mock service
         @user = User.new({:name => "paul", 
                           :email => "paul@pauldix.net", 
                           :password => "strongpass", 
@@ -31,21 +35,12 @@ describe "LogicalModel User client" do
 
   describe "#paginate" do
     before do
-      # --> Mock service
-      req = Typhoeus::Request.any_instance
-      response = mock(
-        code: 200,
-        body: {
-          collection: [{name:'a',email:'a@m'},
-                       {name:'b',email:'b@m'},
-                       {name:'c',email:'c@m'}],
-          total: 6
-        }.to_json,
-        request: mock(url:"mockedurl"),
-        time: 1234
+      mock_index(
+        collection: [{name:'a',email:'a@m'},
+                     {name:'b',email:'b@m'},
+                     {name:'c',email:'c@m'}],
+        total: 6
       )
-      req.stub(:on_complete).and_yield(response)
-      # <-- service mocked
 
       @users = User.paginate(page:1, per_page:1)
     end
@@ -59,21 +54,9 @@ describe "LogicalModel User client" do
 
   describe "#count" do
     before do
-      # --> Mock service
-      req = Typhoeus::Request.any_instance
-      response = mock(
-        code: 200,
-        body: {
-          collection: [{name:'a',email:'a@m'},
-                       {name:'b',email:'b@m'},
-                       {name:'c',email:'c@m'}],
-          total: 6
-        }.to_json,
-        request: mock(url:"mockedurl"),
-        time: 1234
+      mock_index(
+        total: 6
       )
-      req.stub(:on_complete).and_yield(response)
-      # <-- service mocked
     end
     let(:count){User.count}
     it "should return a Integer" do
@@ -81,6 +64,28 @@ describe "LogicalModel User client" do
     end
     it "should return total amount of users" do
       count.should == 6
+    end
+  end
+
+  describe "#find" do
+    context "if found" do
+      before do
+        mock_show(
+          attributes: {
+            id: 1,
+            name: 'mocked-username',
+            email: 'mocked@mail',
+            password: '1234',
+            bio: 'asdfasdf'
+          }
+        )
+
+        @user = User.find(1)
+      end
+      it "should set attributes" do
+        @user.id.should == 1
+        @user.email.should == "mocked@mail"
+      end
     end
   end
 

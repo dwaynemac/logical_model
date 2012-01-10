@@ -1,5 +1,43 @@
 module TyphoeusMocks
 
+  # This stubs response of GET /resource
+  #
+  # @param [Hash] options
+  # @option options [Array<Hash>] :collection
+  # @option options [Integer] :total
+  # @option options [String] :url
+  # @option options [Integer] :status - HTTP status
+  def mock_index(options={})
+    req = Typhoeus::Request.any_instance
+    response = mock(
+      code: options[:status] || 200,
+      body: {
+        collection: options[:collection] || [],
+        total: options[:total] || 0
+      }.to_json,
+      request: mock(url: options[:url] || "mockedurl"),
+      time: 1234
+    )
+    req.stub(:on_complete).and_yield(response)
+  end
+
+  # This stubs response of GET /resource/:id
+  #
+  # @param [Hash] options
+  # @option options [Array<Hash>] :attributes
+  # @option options [String] :url
+  # @option options [Integer] :status - HTTP status
+  def mock_show(options={})
+    req = Typhoeus::Request.any_instance
+    response = mock(
+      code: options[:status] || 200,
+      body: options[:attributes].to_json,
+      request: mock(url: options[:url] || "mockedurl"),
+      time: 1234
+    )
+    req.stub(:on_complete).and_yield(response)
+  end
+
   # Mocks a Typhoeus::Response
   # @param [Hash] options
   # @option [Integer] code - http response code. default: 200
