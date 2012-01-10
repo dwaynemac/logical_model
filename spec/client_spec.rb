@@ -56,7 +56,34 @@ describe "LogicalModel User client" do
       @users.total_count.should == 6
     end
   end
-  
+
+  describe "#count" do
+    before do
+      # --> Mock service
+      req = Typhoeus::Request.any_instance
+      response = mock(
+        code: 200,
+        body: {
+          collection: [{name:'a',email:'a@m'},
+                       {name:'b',email:'b@m'},
+                       {name:'c',email:'c@m'}],
+          total: 6
+        }.to_json,
+        request: mock(url:"mockedurl"),
+        time: 1234
+      )
+      req.stub(:on_complete).and_yield(response)
+      # <-- service mocked
+    end
+    let(:count){User.count}
+    it "should return a Integer" do
+      count.should be_a(Integer)
+    end
+    it "should return total amount of users" do
+      count.should == 6
+    end
+  end
+
   describe "#https" do
     context "when use_ssl is tue" do
       before(:each) do

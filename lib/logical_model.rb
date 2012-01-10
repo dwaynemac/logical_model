@@ -249,8 +249,8 @@ class LogicalModel
   # Usage:
   #   Person.async_paginate(:page => params[:page]){|i| result = i}
   def self.async_paginate(options={})
-    page = options[:page] || 1
-    per_page = options[:per_page] || 20
+    options[:page] ||= 1
+    options[:per_page] ||= 20
 
     options = self.merge_key(options)
 
@@ -266,8 +266,8 @@ class LogicalModel
                                              result_set[:collection],
                                              {
                                                :total_count=>result_set[:total],
-                                               :limit => per_page,
-                                               :offset => per_page * ([page, 1].max - 1)
+                                               :limit => options[:per_page],
+                                               :offset => options[:per_page] * ([options[:page], 1].max - 1)
                                              }
                                             )
 
@@ -283,6 +283,52 @@ class LogicalModel
   def self.paginate(options={})
     result = nil
     async_paginate(options){|i| result = i}
+    Timeout::timeout(self.timeout/1000) do
+      self.hydra.run
+    end
+    result
+  rescue Timeout::Error
+    self.logger.warn("timeout")
+    return nil
+  end
+
+  # Asynchronic Count
+  #  This count won't block excecution waiting for result, count will be enqueued in Objectr#hydra.
+  #
+  # Parameters:
+  #   @param options [Hash].
+  #   Valid options are:
+  #   @option options [Integer] :page - indicated what page to return. Defaults to 1.
+  #   @option options [Integer] :per_page - indicates how many records to be returned per page. Defauls to 20
+  #   @option options [Hash] all other options will be forwarded in :params to WebService
+  #
+  # @example 'Count bobs'
+  #   Person.async_count(:when => {:name => 'bob'}}){|i| result = i}
+  def self.async_count(options={})
+    options[:page] = 1
+    options[:per_page] = 1
+
+    options = self.merge_key(options)
+
+    request = Typhoeus::Request.new(resource_uri, :params => options)
+    request.on_complete do |response|
+      if response.code >= 200 && response.code < 400
+        log_ok(response)
+
+        result_set = self.from_json(response.body)
+
+        yield result_set[:total]
+      else
+        log_failed(response)
+      end
+    end
+    self.hydra.queue(request)
+  end
+
+  # synchronic count
+  def self.count(options={})
+    result = nil
+    async_count(options){|i| result = i}
     Timeout::timeout(self.timeout/1000) do
       self.hydra.run
     end
