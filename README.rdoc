@@ -62,7 +62,7 @@ the database. We could change this by deleting all users in the test setup.
 
 To run spec:
 
-    bundle exec rspec spec/client_spec.rb
+    bundle exec rspec spec/client_spec.rb --color
 
 
 == Contributing to logical_model

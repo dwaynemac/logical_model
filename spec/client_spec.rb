@@ -108,4 +108,50 @@ describe "LogicalModel User client" do
       end
     end
   end
+
+  describe "delete_multiple" do
+    before do
+      Typhoeus::Request.stub!(:delete).and_return(mock_response(body: 'ok'))
+    end
+    context "when disabled" do
+      it "should raise exception" do
+        class User < LogicalModel; self.enable_delete_multiple = false; end
+        expect{User.delete_multiple([1,2,4,5])}.to raise_error
+      end
+    end
+    context "when enabled" do
+      it "should raise exception" do
+        class User < LogicalModel; self.enable_delete_multiple = true; end
+        expect{User.delete_multiple([1,2,4,5])}.not_to raise_error
+      end
+    end
+  end
+
+  describe "#delete_multiple_enabled?" do
+    context "with config: 'enable_multiple_delete = true'" do
+      before do
+        class User < LogicalModel
+          self.enable_delete_multiple = true
+        end
+      end
+      it "should return true" do
+        User.delete_multiple_enabled?.should be_true
+      end
+    end
+    context "with config: 'enable_delete_multiple = false'" do
+        it "should return false" do
+        class User < LogicalModel
+          self.enable_delete_multiple = false
+        end
+        User.delete_multiple_enabled?.should be_false
+      end
+    end
+    context "without config" do
+      it "should default to false" do
+        class AnotherClass < LogicalModel
+        end
+        AnotherClass.delete_multiple_enabled?.should be_false
+      end
+    end
+  end
 end

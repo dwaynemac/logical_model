@@ -62,12 +62,15 @@ class LogicalModel
   DEFAULT_TIMEOUT = 10000
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout, :use_ssl, :log_path, :use_api_key, :json_root
+    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout,
+                  :use_ssl, :use_api_key, :enable_delete_multiple,
+                  :json_root, :log_path
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def use_ssl; @use_ssl ||= false; end
     def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
+    def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
 
     def validates_associated(*associations)
       associations.each do |association|
@@ -537,9 +540,46 @@ class LogicalModel
     self.class.delete(self.id,params)
   end
 
+  # Deletes all Objects matching given ids
+  #
+  # This method will make a DELETE request to resource_uri/destroy_multiple
+  #
+  # Returns nil if delete failed
+  #
+  # @param [Array] ids - ids of contacts to be deleted
+  # @param [Hash] params - other params to be sent to WS on request
+  #
+  # Usage:
+  #   Person.delete_multiple([1,2,4,5,6])
+  def self.delete_multiple(ids, params={})
+    raise "not-enabled" unless self.delete_multiple_enabled?
+
+    params = self.merge_key(params)
+    params.merge({:ids => ids})
+
+    response = nil
+    Timeout::timeout(self.timeout/1000) do
+      response = Typhoeus::Request.delete( self.resource_uri+"/destroy_multiple",
+                                           :params => params,
+                                           :timeout => self.timeout
+      )
+    end
+    if response == 200
+      log_ok(response)
+      return self
+    else
+      log_failed(response)
+      return nil
+    end
+  rescue Timeout::Error
+    self.logger.warn "timeout"
+    return nil
+  end
+
   def persisted?
     false
   end
+
 
   # Returns true if a record has not been persisted yet.
   #
