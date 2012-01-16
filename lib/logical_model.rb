@@ -520,7 +520,7 @@ class LogicalModel
                                          :timeout => self.timeout
                                        )
     end
-    if response == 200
+    if response.code == 200
       log_ok(response)
       return self
     else
@@ -555,7 +555,7 @@ class LogicalModel
     raise "not-enabled" unless self.delete_multiple_enabled?
 
     params = self.merge_key(params)
-    params.merge({:ids => ids})
+    params = params.merge({:ids => ids})
 
     response = nil
     Timeout::timeout(self.timeout/1000) do
@@ -564,7 +564,7 @@ class LogicalModel
                                            :timeout => self.timeout
       )
     end
-    if response == 200
+    if response.code == 200
       log_ok(response)
       return self
     else
