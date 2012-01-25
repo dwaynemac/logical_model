@@ -154,4 +154,31 @@ describe "LogicalModel User client" do
       end
     end
   end
+
+  describe "callbacks" do
+    describe "before_save" do
+      before do
+        class User < LogicalModel
+          before_save :raise_message
+
+          def raise_message
+            raise 'before_save_called'
+          end
+        end
+      end
+      it "should be called on #save" do
+        u = User.new
+        expect{u.save}.to raise_error('before_save_called')
+      end
+      it "should be called on #create" do
+        u = User.new
+        expect{u.create}.to raise_error('before_save_called')
+      end
+      it "should be called on #update" do
+        u = User.new
+        expect{u.update(id: 1)}.to raise_error('before_save_called')
+      end
+    end
+  end
+
 end

@@ -48,7 +48,12 @@ class LogicalModel
   include ActiveModel::Validations
   include ActiveModel::MassAssignmentSecurity
 
+  extend ActiveModel::Callbacks
+  define_model_callbacks :create, :save, :update, :destroy
+
   self.include_root_in_json = false
+
+  # TODO clean this file refactoring into modules
 
   def self.attribute_keys=(keys)
     @attribute_keys = keys
@@ -230,6 +235,37 @@ class LogicalModel
     end
   end
 
+  def create(params={})
+    run_callbacks :save do
+      run_callbacks :create do
+        _create(params)
+      end
+    end
+  end
+
+  def update(attribute_params)
+    run_callbacks :save do
+      run_callbacks :update do
+        _update(attribute_params)
+      end
+    end
+
+  end
+
+  def save
+    run_callbacks :save do
+      run_callbacks new_record?? :create : :update do
+        _save
+      end
+    end
+  end
+
+  def delete(id, params={})
+    run_callbacks :destroy do
+      _delete(id, params={})
+    end
+  end
+
   #  ============================================================================================================
   #  Following methods are API specific.
   #  They assume we are using a RESTfull API.
@@ -391,7 +427,7 @@ class LogicalModel
   # @example Usage:
   #   @person = Person.new(params[:person])
   #   @person.create( non_attribute_param: "value" )
-  def create(params = {})
+  def _create(params = {})
     return false unless valid?
 
     params = { self.json_root => self.attributes }.merge(params)
@@ -429,7 +465,7 @@ class LogicalModel
   #
   # Usage:
   #   @person.update(params[:person])
-  def update(attribute_params)
+  def _update(attribute_params)
 
     self.attributes = attribute_params[self.json_root]
 
@@ -474,7 +510,7 @@ class LogicalModel
   #
   # Usage:
   #   @person.save
-  def save
+  def _save
     self.attributes = attributes
 
     return false unless valid?
@@ -509,7 +545,7 @@ class LogicalModel
   #
   # Usage:
   #   Person.delete(params[:id])
-  def self.delete(id, params={})
+  def self._delete(id, params={})
 
     params = self.merge_key(params)
 
