@@ -260,7 +260,7 @@ class LogicalModel
     end
   end
 
-  def delete(id, params={})
+  def self.delete(id, params={})
     run_callbacks :destroy do
       _delete(id, params={})
     end
