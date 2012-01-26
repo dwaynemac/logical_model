@@ -179,6 +179,24 @@ describe "LogicalModel User client" do
         expect{u.update(id: 1)}.to raise_error('before_save_called')
       end
     end
+    describe "before_destroy" do
+      before do
+        class User < LogicalModel
+          before_destroy :raise_message
+
+          def raise_message
+            raise 'before_destroy_called'
+          end
+        end
+      end
+      it "should not be called on User.delete" do
+        expect{User.delete(1)}.not_to raise_error('before_destroy_called')
+      end
+      it "should be called on #destroy" do
+        u = User.new
+        expect{u.destroy}.to raise_error('before_destroy_called')
+      end
+    end
   end
 
 end

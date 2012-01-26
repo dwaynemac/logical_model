@@ -260,9 +260,9 @@ class LogicalModel
     end
   end
 
-  def self.delete(id, params={})
+  def destroy(params={})
     run_callbacks :destroy do
-      _delete(id, params)
+      _destroy(params)
     end
   end
 
@@ -545,7 +545,7 @@ class LogicalModel
   #
   # Usage:
   #   Person.delete(params[:id])
-  def self._delete(id, params={})
+  def self.delete(id, params={})
 
     params = self.merge_key(params)
 
@@ -572,7 +572,7 @@ class LogicalModel
   #
   # Usage:
   #   @person.destroy
-  def destroy(params={})
+  def _destroy(params={})
     self.class.delete(self.id,params)
   end
 
