@@ -89,6 +89,45 @@ describe "LogicalModel User client" do
     end
   end
 
+  describe "use_api_key" do
+    context "when true" do
+      before(:each) do
+        class User < LogicalModel; self.use_api_key=true; self.api_key_name='keyname'; self.api_key="secret_api_key"; end
+      end
+      it "should send api key in requests" do
+        Typhoeus::Request.should_receive(:new).with(User.resource_uri(1),{:params=>{'keyname'=>'secret_api_key'}})
+        begin
+          User.find(1)
+        rescue
+        end
+      end
+      it "should mask api key in logs" do
+        response = mock(
+            code: 200,
+            body: {}.to_json,
+            request: mock(url: "server?keyname=secret_api_key"),
+            time: 1234
+        )
+        Logger.any_instance.should_receive(:info).with(/\[SECRET\]/)
+        User.log_ok(response)
+        Logger.any_instance.should_receive(:warn).with(/\[SECRET\]/)
+        User.log_failed(response)
+      end
+    end
+    context "when false" do
+      before(:each) do
+        class User < LogicalModel; self.use_api_key=false; self.api_key_name='keyname'; self.api_key="secret_api_key"; end
+      end
+      it "should not send api key in requests" do
+        Typhoeus::Request.should_not_receive(:new).with(User.resource_uri(1),{:params=>{'keyname'=>'secret_api_key'}})
+        begin
+          User.find(1)
+        rescue
+        end
+      end
+    end
+  end
+
   describe "#https" do
     context "when use_ssl is tue" do
       before(:each) do

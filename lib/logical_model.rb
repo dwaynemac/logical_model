@@ -4,6 +4,7 @@ require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl
 require 'logger'
 require 'kaminari'
+require 'safe_log'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
 #
@@ -40,6 +41,8 @@ require 'kaminari'
 #  RemoteResource.delete(params[:id])
 #  RemoteResource#destroy
 class LogicalModel
+
+  extend SafeLog
 
   # include ActiveModel Modules that are usefull
   extend ActiveModel::Naming
@@ -198,7 +201,7 @@ class LogicalModel
   end
 
   def self.log_ok(response)
-    self.logger.info("LogicalModel Log: #{response.code} #{response.request.url} in #{response.time}s")
+    self.logger.info("LogicalModel Log: #{response.code} #{mask_api_key(response.request.url)} in #{response.time}s")
     self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
   end
 
@@ -212,7 +215,7 @@ class LogicalModel
     rescue => e
       error_message = "error"
     end
-    msg = "LogicalModel Log: #{response.code} #{response.request.url} in #{response.time}s FAILED: #{error_message}"
+    msg = "LogicalModel Log: #{response.code} #{mask_api_key(response.request.url)} in #{response.time}s FAILED: #{error_message}"
     self.logger.warn(msg)
     self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
   end
