@@ -55,7 +55,7 @@ In your Gemfile:
 
 To run spec:
 
-    bundle exec rspec spec/client_spec.rb --color
+    bundle exec rake
 
 
 == Contributing to logical_model

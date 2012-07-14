@@ -48,7 +48,7 @@ Rcov::RcovTask.new do |test|
   test.rcov_opts << '--exclude "gems/*"'
 end
 
-task :default => :test
+task :default => :specs
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
@@ -73,4 +73,9 @@ namespace :db do
     ActiveRecord::Migration.verbose = true
     ActiveRecord::Migrator.migrate("db/migrate")
   end
+end
+
+desc "run specs"
+task(:specs) do
+  exec "bundle exec rspec spec/client_spec.rb --color"
 end
