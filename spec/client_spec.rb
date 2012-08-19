@@ -3,18 +3,13 @@ require File.dirname(__FILE__) + '/../client'
 require File.dirname(__FILE__) + '/../test/typhoeus_mocks.rb'
 include TyphoeusMocks
 
-# NOTE: to run these specs you must have the service running locally. Do like this:
-# ruby service.rb -p 3000 -e test
-
-# Also note that after a single run of the tests the server must be restarted to reset
-# the database. We could change this by deleting all users in the test setup.
 describe "LogicalModel User client" do
 
   describe "#create" do
     context "with valid attributes" do
       before(:each) do
-        # TODO mock service
-        @user = User.new({:name => "paul", 
+        mock_post_with(code: 201, body: {'id' => 3}.to_json)
+        @user = User.new({:name => "paul",
                           :email => "paul@pauldix.net", 
                           :password => "strongpass", 
                           :bio => "rubyist"})
@@ -34,21 +29,34 @@ describe "LogicalModel User client" do
   end
 
   describe "#paginate" do
-    before do
-      mock_index(
-        collection: [{name:'a',email:'a@m'},
-                     {name:'b',email:'b@m'},
-                     {name:'c',email:'c@m'}],
-        total: 6
-      )
-
-      @users = User.paginate(page:1, per_page:1)
+    context "when successfull" do
+      before do
+        mock_index(
+            collection: [{name:'a',email:'a@m'},
+                         {name:'b',email:'b@m'},
+                         {name:'c',email:'c@m'}],
+            total: 6
+        )
+        @users = User.paginate(page:1, per_page:1)
+      end
+      it "should return a Kaminari::PaginatableArray" do
+        @users.should be_a(Kaminari::PaginatableArray)
+      end
+      it "should set total_count" do
+        @users.total_count.should == 6
+      end
     end
-    it "should return a Kaminari::PaginatableArray" do
-      @users.should be_a(Kaminari::PaginatableArray)
-    end
-    it "should set total_count" do
-      @users.total_count.should == 6
+    context "when it fails" do
+      before do
+        req = Typhoeus::Request.any_instance
+        response = mock( code: 500, body: "error", request: "mockedurl", time: 1234 )
+        req.stub(:on_complete).and_yield(response)
+      end
+      it "should retry LogicalModel#retries times (default: 3)" do
+        User.retries= 2
+        LogicalModel.should_receive(:async_paginate).exactly(2)
+        User.paginate(page:1,per_page:1).should be_nil
+      end
     end
   end
 

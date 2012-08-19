@@ -68,13 +68,16 @@ class LogicalModel
   end
 
   DEFAULT_TIMEOUT = 10000
+  DEFAULT_RETRIES = 3
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name, :timeout,
+    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name,
+                  :timeout, :retries,
                   :use_ssl, :use_api_key, :enable_delete_multiple,
                   :json_root, :log_path
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
+    def retries; @retries ||= DEFAULT_RETRIES; end
     def use_ssl; @use_ssl ||= false; end
     def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
@@ -324,14 +327,19 @@ class LogicalModel
   #synchronic pagination
   def self.paginate(options={})
     result = nil
-    async_paginate(options){|i| result = i}
-    Timeout::timeout(self.timeout/1000) do
-      self.hydra.run
+    self.retries.times do
+      begin
+        async_paginate(options){|i| result = i}
+        Timeout::timeout(self.timeout/1000) do
+          self.hydra.run
+        end
+        break unless result.nil?
+      rescue Timeout::Error
+        self.logger.warn("timeout")
+        result = nil
+      end
     end
     result
-  rescue Timeout::Error
-    self.logger.warn("timeout")
-    return nil
   end
 
   # Asynchronic Count
@@ -437,9 +445,9 @@ class LogicalModel
     params = self.class.merge_key(params)
 
     response = nil
-    Timeout::timeout(self.class.timeout/1000) do
+    #Timeout::timeout(self.class.timeout/1000) do
       response = Typhoeus::Request.post( self.class.resource_uri, :params => params, :timeout => self.class.timeout )
-    end
+    #end
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]

@@ -45,11 +45,11 @@ module TyphoeusMocks
   # @option [String] url - requested url
   # @return [Typhoeus::Response]
   def mock_response(options={})
-    mock_response = Typhoeus::Response.new(
-         :code => options[:code] || 200,
-         :headers => "whatever",
-         :time => 0.1,
-         :body => options[:body])
+    mock_response = Typhoeus::Response.new()
+    mock_response.stub(:code).and_return(options[:code]||200)
+    mock_response.stub(:headers).and_return('whatever')
+    mock_response.stub(:time).and_return(0.1)
+    mock_response.stub(:body).and_return options[:body]
     mock_response.stub!(:request).and_return(mock(:url => options[:url] || "mocked-url"))
     mock_response
   end
