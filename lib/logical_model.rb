@@ -204,7 +204,7 @@ class LogicalModel
   end
 
   def self.log_ok(response)
-    self.logger.info("LogicalModel Log: #{response.code} #{mask_api_key(response.request.url)} in #{response.time}s")
+    self.logger.info("LogicalModel Log: #{response.code} #{mask_api_key(response.effective_url)} in #{response.time}s")
     self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
   end
 
@@ -218,7 +218,7 @@ class LogicalModel
     rescue => e
       error_message = "error"
     end
-    msg = "LogicalModel Log: #{response.code} #{mask_api_key(response.request.url)} in #{response.time}s FAILED: #{error_message}"
+    msg = "LogicalModel Log: #{response.code} #{mask_api_key(response.effective_url)} in #{response.time}s FAILED: #{error_message}"
     self.logger.warn(msg)
     self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
   end
