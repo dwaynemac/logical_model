@@ -1,10 +1,3 @@
-GIT
-  remote: git@github.com:dwaynemac/typhoeus.git
-  revision: 453ca7a8dffbe2d16dc66cd9ba2650614f906070
-  specs:
-    typhoeus (0.5.0.alpha)
-      ethon (~> 0.4.2)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -107,6 +100,8 @@ GEM
       sqlite3 (>= 1.3.3)
     thor (0.14.6)
     tilt (1.3.3)
+    typhoeus (0.5.0.alpha)
+      ethon (~> 0.4.2)
     tzinfo (0.3.31)
 
 PLATFORMS
@@ -129,4 +124,4 @@ DEPENDENCIES
   shoulda
   sinatra (~> 1.2.6)
   sqlite3-ruby
-  typhoeus!
+  typhoeus (= 0.5.0.alpha)

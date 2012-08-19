@@ -3,7 +3,7 @@ source "http://rubygems.org"
 
 gem "activemodel"
 gem "activesupport"
-gem "typhoeus", git: "git@github.com:dwaynemac/typhoeus.git"
+gem "typhoeus", '0.5.0.alpha'
 gem "kaminari", '~> 0.13.0'
 
 group :development, :test do
