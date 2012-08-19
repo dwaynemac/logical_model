@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "logical_model"
-  s.version = "0.2.18"
+  s.version = "0.2.19"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dwayne Macgowan"]
-  s.date = "2012-07-21"
+  s.date = "2012-08-19"
   s.description = "LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3"
   s.email = "dwaynemac@gmail.com"
   s.extra_rdoc_files = [
@@ -35,9 +35,7 @@ Gem::Specification.new do |s|
     "lib/safe_log.rb",
     "logical_model.gemspec",
     "models/user.rb",
-    "service.rb",
     "spec/client_spec.rb",
-    "spec/service_spec.rb",
     "test/helper.rb",
     "test/test_logical_model.rb",
     "test/typhoeus_mocks.rb"
