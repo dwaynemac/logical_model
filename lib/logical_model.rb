@@ -450,7 +450,9 @@ class LogicalModel
     end
     if response.code == 201
       log_ok(response)
-      self.id = ActiveSupport::JSON.decode(response.body)["id"]
+      if self.class.attribute_keys.include?(:id)
+        self.id = ActiveSupport::JSON.decode(response.body)["id"]
+      end
     elsif response.code == 400
       log_failed(response)
       ws_errors = ActiveSupport::JSON.decode(response.body)["errors"]
