@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "logical_model"
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dwayne Macgowan"]
@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
     "db/migrate/001_create_users.rb",
     "lib/logical_model.rb",
     "lib/safe_log.rb",
+    "lib/typhoeus_fix/array_decoder.rb",
     "logical_model.gemspec",
     "models/user.rb",
     "spec/client_spec.rb",
