@@ -18,7 +18,7 @@ require 'safe_log'
 #   api_key_name: api key parameter name. eg: app_key
 #   api_key: api_key. eg: "asd32fa4s4pdf35tr"
 #   log_path: Path to log file. Will be ignored if using Rails.
-#   json_root: TODO doc
+#   json_root: Used to build parameters. Default: class name underscored
 #
 # You may use validations such as validates_presence_of, etc.
 #
@@ -445,9 +445,9 @@ class LogicalModel
     params = self.class.merge_key(params)
 
     response = nil
-    #Timeout::timeout(self.class.timeout/1000) do
-      response = Typhoeus::Request.post( self.class.resource_uri, :params => params, :timeout => self.class.timeout )
-    #end
+    Timeout::timeout(self.class.timeout/1000) do
+      response = Typhoeus::Request.post( self.class.resource_uri, :body => params, :timeout => self.class.timeout )
+    end
     if response.code == 201
       log_ok(response)
       self.id = ActiveSupport::JSON.decode(response.body)["id"]
@@ -484,26 +484,18 @@ class LogicalModel
 
     params = self.class.merge_key(attribute_params)
 
-    e = Typhoeus::Easy.new
-
-    e.url = self.class.resource_uri(_id)
-    e.method = :put
-    e.params = params
-
     response = nil
     Timeout::timeout(self.class.timeout/1000) do
-      # using Typhoeus::Easy avoids PUT hang issue: https://github.com/dbalatero/typhoeus/issues/69
-      e.perform
+      response = Typhoeus::Request.put( self.class.resource_uri(id),
+                                        :params => params,
+                                        :timeout => self.class.timeout )
     end
 
-    if e.response_code == 200
-      self.class.logger.info("LogicalModel Log: #{e.response_code} #{e.url} in #{e.total_time_taken}s")
-      self.class.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
+    if response.code == 200
+      log_ok(response)
       return self
     else
-      msg = "LogicalModel Log: #{e.response_code} #{e.url} in #{e.total_time_taken}s FAILED"
-      self.class.logger.warn(msg)
-      self.class.logger.debug("LogicalModel Log RESPONSE: #{e.response_body}")
+      log_failed(response)
       return nil
     end
 
