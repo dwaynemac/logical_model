@@ -112,6 +112,7 @@ DEPENDENCIES
   activerecord
   activesupport
   bundler (~> 1.1.3)
+  ethon (= 0.4.2)
   gemcutter
   guard-rspec
   jeweler (~> 1.6.4)
