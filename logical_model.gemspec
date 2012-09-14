@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "logical_model"
-  s.version = "0.3.3"
+  s.version = "0.3.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dwayne Macgowan"]
-  s.date = "2012-08-21"
+  s.date = "2012-09-14"
   s.description = "LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3"
   s.email = "dwaynemac@gmail.com"
   s.extra_rdoc_files = [
@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activemodel>, [">= 0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_runtime_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
+      s.add_runtime_dependency(%q<ethon>, ["= 0.4.2"])
       s.add_runtime_dependency(%q<kaminari>, ["~> 0.13.0"])
       s.add_development_dependency(%q<activerecord>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
@@ -72,6 +73,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<activemodel>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
+      s.add_dependency(%q<ethon>, ["= 0.4.2"])
       s.add_dependency(%q<kaminari>, ["~> 0.13.0"])
       s.add_dependency(%q<activerecord>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
@@ -91,6 +93,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<activemodel>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
+    s.add_dependency(%q<ethon>, ["= 0.4.2"])
     s.add_dependency(%q<kaminari>, ["~> 0.13.0"])
     s.add_dependency(%q<activerecord>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
