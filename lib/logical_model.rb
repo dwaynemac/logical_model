@@ -452,6 +452,8 @@ class LogicalModel
       log_ok(response)
       if self.respond_to?('id=')
         self.id = ActiveSupport::JSON.decode(response.body)["id"]
+			else
+				true
       end
     elsif response.code == 400
       log_failed(response)
