@@ -7,23 +7,51 @@ describe "LogicalModel User client" do
 
   describe "#create" do
     context "with valid attributes" do
-      before(:each) do
-        mock_post_with(code: 201, body: {'id' => 3}.to_json)
-        @user = User.new({:name => "paul",
-                          :email => "paul@pauldix.net", 
-                          :password => "strongpass", 
-                          :bio => "rubyist"})
-        @user.create
+      context "if response is code 201" do
+        before(:each) do
+          mock_post_with(code: 201, body: {'id' => 3}.to_json)
+          @user = User.new({:name => "paul",
+                            :email => "paul@pauldix.net", 
+                            :password => "strongpass", 
+                            :bio => "rubyist"})
+          @ret = @user.create
+        end
+        it "should create a user" do
+          @user.should_not be_nil
+        end
+        it "should set an id" do
+          @user.id.should_not be_nil
+        end
+        it "should hace the same attributes as passed" do
+          @user.name.should == "paul"
+          @user.email == "paul@pauldix.net"
+        end
+        it "should return true" do
+          @ret.should be_true
+        end
       end
-      it "should create a user" do
-        @user.should_not be_nil
-      end
-      it "should set an id" do
-        @user.id.should_not be_nil
-      end
-      it "should hace the same attributes as passed" do
-        @user.name.should == "paul"
-        @user.email == "paul@pauldix.net"
+      context "if response is code 202" do
+        before(:each) do
+          mock_post_with(code: 202, body: {'id' => 3}.to_json)
+          @user = User.new({:name => "paul",
+                            :email => "paul@pauldix.net", 
+                            :password => "strongpass", 
+                            :bio => "rubyist"})
+          @ret = @user.create
+        end
+        it "should create a user" do
+          @user.should_not be_nil
+        end
+        it "should set an id" do
+          @user.id.should_not be_nil
+        end
+        it "should hace the same attributes as passed" do
+          @user.name.should == "paul"
+          @user.email == "paul@pauldix.net"
+        end
+        it "should return true" do
+          @ret.should be_true
+        end
       end
     end
   end

@@ -448,7 +448,7 @@ class LogicalModel
     Timeout::timeout(self.class.timeout/1000) do
       response = Typhoeus::Request.post( self.class.resource_uri, :body => params, :timeout => self.class.timeout )
     end
-    if response.code == 201
+    if response.code == 201 || response.code == 202
       log_ok(response)
       if self.respond_to?('id=')
         self.id = ActiveSupport::JSON.decode(response.body)["id"]
