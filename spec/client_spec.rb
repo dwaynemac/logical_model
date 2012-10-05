@@ -29,6 +29,9 @@ describe "LogicalModel User client" do
         it "should return true" do
           @ret.should be_true
         end
+        it "should store code in last_response_code" do
+          @user.last_response_code.should == 201
+        end
       end
       context "if response is code 202" do
         before(:each) do
@@ -41,6 +44,9 @@ describe "LogicalModel User client" do
         end
         it "should create a user" do
           @user.should_not be_nil
+        end
+        it "should store code in last_response_code" do
+          @user.last_response_code.should == 202
         end
         it "should set an id" do
           @user.id.should_not be_nil

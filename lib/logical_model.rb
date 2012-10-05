@@ -58,6 +58,8 @@ class LogicalModel
 
   # TODO clean this file refactoring into modules
 
+  attr_accessor :last_response_code
+
   def self.attribute_keys=(keys)
     @attribute_keys = keys
     attr_accessor *keys
@@ -448,6 +450,7 @@ class LogicalModel
     Timeout::timeout(self.class.timeout/1000) do
       response = Typhoeus::Request.post( self.class.resource_uri, :body => params, :timeout => self.class.timeout )
     end
+    self.last_response_code = response.code
     if response.code == 201 || response.code == 202
       log_ok(response)
       if self.respond_to?('id=')
