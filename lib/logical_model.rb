@@ -75,7 +75,7 @@ class LogicalModel
   DEFAULT_RETRIES = 3
 
   class << self
-    attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name,
+    attr_accessor :host, :resource_path, :api_key, :api_key_name,
                   :timeout, :retries,
                   :use_api_key, :enable_delete_multiple,
                   :json_root, :log_path
@@ -85,6 +85,14 @@ class LogicalModel
     def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
+
+    def hydra
+      @@hydra
+    end
+
+    def hydra=(hydra)
+      @@hydra = hydra
+    end
 
     def validates_associated(*associations)
       associations.each do |association|
