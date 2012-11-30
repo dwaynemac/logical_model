@@ -4,6 +4,7 @@ require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl
 require 'logger'
 require 'kaminari'
+require 'ssl_support'
 require 'safe_log'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
@@ -42,6 +43,7 @@ require 'safe_log'
 #  RemoteResource#destroy
 class LogicalModel
 
+  include SslSupport
   extend SafeLog
 
   # include ActiveModel Modules that are usefull
@@ -75,12 +77,11 @@ class LogicalModel
   class << self
     attr_accessor :host, :hydra, :resource_path, :api_key, :api_key_name,
                   :timeout, :retries,
-                  :use_ssl, :use_api_key, :enable_delete_multiple,
+                  :use_api_key, :enable_delete_multiple,
                   :json_root, :log_path
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def retries; @retries ||= DEFAULT_RETRIES; end
-    def use_ssl; @use_ssl ||= false; end
     def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
@@ -106,9 +107,8 @@ class LogicalModel
   end
 
   def self.resource_uri(id=nil)
-    prefix = (use_ssl)? "https://" : "http://"
     sufix  = (id.nil?)? "" : "/#{id}"
-    "#{prefix}#{host}#{resource_path}#{sufix}"
+    "#{url_protocol_prefix}#{host}#{resource_path}#{sufix}"
   end
 
   def initialize(attributes={})
