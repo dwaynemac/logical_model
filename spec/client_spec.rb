@@ -147,7 +147,7 @@ describe "LogicalModel User client" do
         response = mock(
             code: 200,
             body: {}.to_json,
-            request: mock(url: "server?keyname=secret_api_key"),
+            effective_url: "server?keyname=secret_api_key",
             time: 1234
         )
         Logger.any_instance.should_receive(:info).with(/\[SECRET\]/)
@@ -192,7 +192,7 @@ describe "LogicalModel User client" do
 
   describe "delete_multiple" do
     before do
-      Typhoeus::Request.stub!(:delete).and_return(mock_response(body: 'ok'))
+      Typhoeus::Request.stub!(:delete).and_return(mock_response(body: 'ok', effective_url: 'mocked-url'))
     end
     context "when disabled" do
       it "should raise exception" do

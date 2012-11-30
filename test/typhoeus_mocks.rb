@@ -15,7 +15,7 @@ module TyphoeusMocks
         collection: options[:collection] || [],
         total: options[:total] || 0
       }.to_json,
-      request: mock(url: options[:url] || "mockedurl"),
+      effective_url: options[:url] || 'mockedurl',
       time: 1234
     )
     req.stub(:on_complete).and_yield(response)
@@ -32,6 +32,7 @@ module TyphoeusMocks
     response = mock(
       code: options[:status] || 200,
       body: options[:attributes].to_json,
+      effective_url: options[:url] || 'mockedurl',
       request: mock(url: options[:url] || "mockedurl"),
       time: 1234
     )
