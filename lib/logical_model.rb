@@ -259,10 +259,11 @@ class LogicalModel
     end
   end
 
-  def update(attribute_params)
+  # @param params [Hash] parameters to be sent to service
+  def update(params)
     run_callbacks :save do
       run_callbacks :update do
-        _update(attribute_params)
+        _update(params)
       end
     end
 
@@ -491,13 +492,13 @@ class LogicalModel
   #
   # Usage:
   #   @person.update(params[:person])
-  def _update(attribute_params)
+  def _update(params)
 
-    self.attributes = attribute_params[self.json_root]
+    self.attributes = params[self.json_root]
 
     return false unless valid?
 
-    params = self.class.merge_key(attribute_params)
+    params = self.class.merge_key(params)
 
     response = nil
     Timeout::timeout(self.class.timeout/1000) do
