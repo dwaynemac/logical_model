@@ -39,7 +39,7 @@ class Hash
   # @return [TrueClass]
   def im_an_array_typhoeus_encoded?
     return false if self.empty?
-    self.keys.sort == (0...self.keys.size).map{|i|i.to_s}
+    self.keys.map {|k| k.to_i}.sort == (0...self.keys.size).map {|i| i}
   end
 
   # If the hash is an array encoded by typhoeus an array is returned
