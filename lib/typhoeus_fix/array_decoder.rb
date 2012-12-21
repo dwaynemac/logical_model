@@ -39,6 +39,8 @@ class Hash
   # @return [TrueClass]
   def im_an_array_typhoeus_encoded?
     return false if self.empty?
+    #return if array is empty or the key is not a valid number
+    return false if self.empty? || self.keys.first.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil
     self.keys.map {|k| k.to_i}.sort == (0...self.keys.size).map {|i| i}
   end
 
