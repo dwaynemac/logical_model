@@ -3,8 +3,7 @@ source "http://rubygems.org"
 
 gem "activemodel"
 gem "activesupport"
-gem "typhoeus", '0.5.0.alpha'
-gem "ethon", "0.4.2"
+gem "typhoeus", '0.5.1'
 gem "kaminari", '~> 0.13.0'
 
 group :development, :test do
