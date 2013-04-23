@@ -4,7 +4,6 @@ class LogicalModel
   module SafeLog
 
     def self.included(base)
-      base.class.send(:attr_accessor, :use_ssl)
       base.send(:include, InstanceMethods)
       base.send(:extend, ClassMethods)
     end

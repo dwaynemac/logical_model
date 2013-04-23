@@ -2,7 +2,6 @@ class LogicalModel
   module HasManyKeys
 
     def self.included(base)
-      base.class.send(:attr_accessor, :use_ssl)
       base.send(:extend, ClassMethods)
     end
 
