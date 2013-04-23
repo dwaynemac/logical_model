@@ -5,6 +5,34 @@ include TyphoeusMocks
 
 describe "LogicalModel User client" do
 
+  subject{User}
+
+  describe "RESTActions" do
+    %W(find async_find paginate async_paginate delete delete_multiple).each do |class_action|
+      it { should respond_to class_action }
+    end
+  end
+
+
+  describe "has_many_keys" do
+    it { should respond_to 'has_many_keys=' }
+    it { should respond_to 'has_many_keys'}
+  end
+
+  describe "ssl_support" do
+    it { should respond_to 'use_ssl?' }
+    it { should respond_to 'url_protocol_prefix' }
+    it { should respond_to 'ssl_recommended?' }
+  end
+
+  describe "safe_log" do
+    it { should respond_to 'log_ok' }
+    it { should respond_to 'log_failed' }
+    it { should respond_to 'logger' }
+    it { should respond_to 'mask_api_key' }
+  end
+
+
   describe "#create" do
     context "with valid attributes" do
       context "if response is code 201" do
