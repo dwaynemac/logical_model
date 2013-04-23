@@ -45,6 +45,17 @@ describe "LogicalModel User client" do
   end
 
   describe "api_key" do
+    describe "set_api_key" do
+      it { should respond_to 'set_api_key'}
+      it "sets api_key" do
+        class User < LogicalModel
+          set_api_key(:key_name, 'secret_api_key')
+        end
+        User.use_api_key.should be_true
+        User.api_key.should == 'secret_api_key'
+        User.api_key_name.should == :key_name
+      end
+    end
     describe "use_api_key" do
       it { should respond_to 'use_api_key' }
       context "when true" do
