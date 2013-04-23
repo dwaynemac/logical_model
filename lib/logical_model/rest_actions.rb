@@ -168,6 +168,9 @@ class LogicalModel
     end
 
     module ClassMethods
+
+      attr_accessor :enable_delete_multiple
+
       #  ============================================================================================================
       #  Following methods are API specific.
       #  They assume we are using a RESTfull API.

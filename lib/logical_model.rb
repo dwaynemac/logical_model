@@ -81,7 +81,6 @@ class LogicalModel
   class << self
     attr_accessor :host, :resource_path,
                   :timeout, :retries,
-                  :enable_delete_multiple,
                   :json_root
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
