@@ -145,7 +145,7 @@ class LogicalModel
           if attr_params["_type"].present?
             attr_class = attr_params.delete("_type").to_s.constantize
           else
-            attr_class = association.to_s.camelize.constantize
+            attr_class = association.to_s.singularize.camelize.constantize
           end
           collection << attr_class.new(attr_params)
         end
