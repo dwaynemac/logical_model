@@ -2,10 +2,9 @@ require 'timeout'
 require 'active_model'
 require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl
-require 'logger'
 require 'kaminari'
 require 'ssl_support'
-require 'safe_log'
+require 'logical_model/safe_log'
 require 'logical_model/has_many_keys'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
@@ -45,9 +44,9 @@ require 'logical_model/has_many_keys'
 class LogicalModel
 
   include SslSupport
-  extend SafeLog
 
-  extend LogicalModel::HasManyKeys
+  include LogicalModel::SafeLog
+  include LogicalModel::HasManyKeys
 
   # include ActiveModel Modules that are usefull
   extend ActiveModel::Naming
@@ -154,34 +153,6 @@ class LogicalModel
     parsed = ActiveSupport::JSON.decode(json_string)
     collection = parsed["collection"].map{|i|self.new(i)}
     return { :collection => collection, :total => parsed["total"].to_i }
-  end
-
-  def self.log_ok(response)
-    self.logger.info("LogicalModel Log: #{response.code} #{mask_api_key(response.effective_url)} in #{response.time}s")
-    self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
-  end
-
-  def log_ok(response)
-    self.class.log_ok(response)
-  end
-
-  def self.log_failed(response)
-    begin
-      error_message = ActiveSupport::JSON.decode(response.body)["message"]
-    rescue => e
-      error_message = "error"
-    end
-    msg = "LogicalModel Log: #{response.code} #{mask_api_key(response.effective_url)} in #{response.time}s FAILED: #{error_message}"
-    self.logger.warn(msg)
-    self.logger.debug("LogicalModel Log RESPONSE: #{response.body}")
-  end
-
-  def log_failed(response)
-    self.class.log_failed(response)
-  end
-
-  def self.logger
-    Logger.new(self.log_path || "log/logical_model.log")
   end
 
   # if needed willmerge api_key into given hash
