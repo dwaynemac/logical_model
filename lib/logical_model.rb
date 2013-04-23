@@ -8,6 +8,7 @@ require 'logical_model/rest_actions'
 require 'logical_model/ssl_support'
 require 'logical_model/safe_log'
 require 'logical_model/has_many_keys'
+require 'logical_model/api_key'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
 #
@@ -47,6 +48,7 @@ class LogicalModel
 
   include LogicalModel::RESTActions
   include LogicalModel::SslSupport
+  include LogicalModel::ApiKey
   include LogicalModel::SafeLog
   include LogicalModel::HasManyKeys
 
@@ -77,14 +79,13 @@ class LogicalModel
   DEFAULT_RETRIES = 3
 
   class << self
-    attr_accessor :host, :resource_path, :api_key, :api_key_name,
+    attr_accessor :host, :resource_path,
                   :timeout, :retries,
-                  :use_api_key, :enable_delete_multiple,
+                  :enable_delete_multiple,
                   :json_root
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def retries; @retries ||= DEFAULT_RETRIES; end
-    def use_api_key; @use_api_key ||= false; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
 
     def hydra
@@ -152,16 +153,6 @@ class LogicalModel
     parsed = ActiveSupport::JSON.decode(json_string)
     collection = parsed["collection"].map{|i|self.new(i)}
     return { :collection => collection, :total => parsed["total"].to_i }
-  end
-
-  # if needed willmerge api_key into given hash
-  # returns merged hash
-  def self.merge_key(params = {})
-    if self.use_api_key
-      params.merge({self.api_key_name => self.api_key})
-    else
-      params
-    end
   end
 
   def persisted?
