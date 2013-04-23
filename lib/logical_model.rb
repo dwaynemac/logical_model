@@ -3,7 +3,7 @@ require 'active_model'
 require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl
 require 'kaminari'
-require 'ssl_support'
+require 'logical_model/ssl_support'
 require 'logical_model/safe_log'
 require 'logical_model/has_many_keys'
 
@@ -43,7 +43,7 @@ require 'logical_model/has_many_keys'
 #  RemoteResource#destroy
 class LogicalModel
 
-  include SslSupport
+  include LogicalModel::SslSupport
 
   include LogicalModel::SafeLog
   include LogicalModel::HasManyKeys
