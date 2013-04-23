@@ -145,7 +145,11 @@ class LogicalModel
     sanitize_for_mass_assignment(attrs).each{|k,v| send("#{k}=",v) if respond_to?("#{k}=")}
   end
 
-
+  ##
+  # Will parse JSON string and initialize classes for all hashes in json_string[collection].
+  #
+  # @param json_string [JSON String] This JSON should have format: {collection: [...], total: X}
+  #
   def self.from_json(json_string)
     parsed = ActiveSupport::JSON.decode(json_string)
     collection = parsed["collection"].map{|i|self.new(i)}
