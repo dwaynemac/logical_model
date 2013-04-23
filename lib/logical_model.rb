@@ -80,11 +80,10 @@ class LogicalModel
     attr_accessor :host, :resource_path, :api_key, :api_key_name,
                   :timeout, :retries,
                   :use_api_key, :enable_delete_multiple,
-                  :json_root, :log_path
+                  :json_root
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def retries; @retries ||= DEFAULT_RETRIES; end
-    def log_path; @log_path ||= "log/logical_model.log"; end
     def use_api_key; @use_api_key ||= false; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
 
@@ -168,7 +167,6 @@ class LogicalModel
   def persisted?
     false
   end
-
 
   # Returns true if a record has not been persisted yet.
   #

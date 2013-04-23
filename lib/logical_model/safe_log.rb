@@ -20,6 +20,11 @@ class LogicalModel
     end
 
     module ClassMethods
+      attr_accessor :log_path
+
+      def log_path
+        @log_path ||= "log/logical_model.log"
+      end
 
       def log_ok(response)
         self.logger.info("LogicalModel Log: #{response.code} #{mask_api_key(response.effective_url)} in #{response.time}s")

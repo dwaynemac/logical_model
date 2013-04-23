@@ -2,7 +2,6 @@ class LogicalModel
   module SslSupport
 
     def self.included(base)
-      base.class.send(:attr_accessor, :use_ssl)
       base.send(:include, InstanceMethods)
       base.send(:extend, ClassMethods)
     end
@@ -12,6 +11,19 @@ class LogicalModel
     end
 
     module ClassMethods
+
+      attr_accessor :use_ssl
+
+      # If called in class, will make al request through SSL.
+      # @example
+      #   class Client < LogicalModel
+      #     force_ssl
+      #     ...
+      #   end
+      def force_ssl
+        @use_ssl = true
+      end
+
       ##
       # Default use_ssl to ssl_recommend?
       # @return [Boolean]

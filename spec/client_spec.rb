@@ -13,16 +13,24 @@ describe "LogicalModel User client" do
     end
   end
 
-
   describe "has_many_keys" do
     it { should respond_to 'has_many_keys=' }
     it { should respond_to 'has_many_keys'}
   end
 
   describe "ssl_support" do
+    it { should respond_to 'use_ssl=' }
     it { should respond_to 'use_ssl?' }
     it { should respond_to 'url_protocol_prefix' }
     it { should respond_to 'ssl_recommended?' }
+    describe "force_ssl" do
+      it { should respond_to 'force_ssl' }
+      it "sets use_ssl to true" do
+        User.use_ssl?.should be_false
+        class User; force_ssl; end;
+        User.use_ssl?.should be_true
+      end
+    end
   end
 
   describe "safe_log" do
@@ -30,8 +38,11 @@ describe "LogicalModel User client" do
     it { should respond_to 'log_failed' }
     it { should respond_to 'logger' }
     it { should respond_to 'mask_api_key' }
+    describe ".log_path" do
+      it { should respond_to 'log_path' }
+      its(:log_path){ should == "logs/development.log"}
+    end
   end
-
 
   describe "#create" do
     context "with valid attributes" do
