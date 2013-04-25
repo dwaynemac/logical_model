@@ -51,6 +51,19 @@ In your Gemfile:
 
     gem "logical_model"
 
+In a model file:
+
+    class RemoteResource < LogicalModel
+      self.host = "http://remote.server"
+      self.resource_path = "/api/remote/path"
+
+      attribute :id
+      attribute :attribute_a
+      attribute :attribute_b
+
+      validates_presence_of :id
+    end
+
 == Testing
 
 To run spec:

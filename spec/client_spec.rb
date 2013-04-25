@@ -13,6 +13,18 @@ describe "LogicalModel User client" do
       it { should respond_to attribute }
       it { should respond_to "#{attribute}="}
     end
+    describe "attribute definer" do
+      it "should add attribute" do
+        User.new.attributes.should_not include :this_is_a_new_attribute
+        User.new.attributes.should_not include :another_new_attribute
+        class User < LogicalModel
+          attribute :this_is_a_new_attribute
+          attribute :another_new_attribute
+        end
+        User.new.attributes.should include :this_is_a_new_attribute
+        User.new.attributes.should include :another_new_attribute
+      end
+    end
   end
 
   describe "RESTActions" do

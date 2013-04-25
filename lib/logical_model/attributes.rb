@@ -7,6 +7,7 @@ class LogicalModel
     end
 
     module InstanceMethods
+
       def attributes=(attrs)
         sanitize_for_mass_assignment(attrs).each{|k,v| send("#{k}=",v) if respond_to?("#{k}=")}
       end
@@ -28,6 +29,18 @@ class LogicalModel
     end
 
     module ClassMethods
+
+      # declares an attribute.
+      # @param name [Symbol]
+      # @example
+      #     class Client < LogicalModel
+      #       attribute :att_name
+      #     end
+      def attribute(name)
+        @attribute_keys << name
+        attr_accessor name
+      end
+
       def attribute_keys=(keys)
         @attribute_keys = keys
         attr_accessor *keys
