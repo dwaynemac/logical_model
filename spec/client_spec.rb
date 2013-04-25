@@ -7,6 +7,14 @@ describe "LogicalModel User client" do
 
   subject{User}
 
+  describe "Attributes" do
+    subject{User.new}
+    %W(id name email password bio).each do |attribute|
+      it { should respond_to attribute }
+      it { should respond_to "#{attribute}="}
+    end
+  end
+
   describe "RESTActions" do
     %W(find async_find paginate async_paginate delete delete_multiple).each do |class_action|
       it { should respond_to class_action }

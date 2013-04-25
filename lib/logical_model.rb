@@ -9,6 +9,7 @@ require 'logical_model/ssl_support'
 require 'logical_model/safe_log'
 require 'logical_model/has_many_keys'
 require 'logical_model/api_key'
+require 'logical_model/attributes'
 
 # Logical Model, not persistant on DB, works through API. (replaces ActiveResource)
 #
@@ -46,6 +47,7 @@ require 'logical_model/api_key'
 #  RemoteResource#destroy
 class LogicalModel
 
+  include LogicalModel::Attributes
   include LogicalModel::RESTActions
   include LogicalModel::SslSupport
   include LogicalModel::ApiKey
@@ -66,17 +68,12 @@ class LogicalModel
 
   attr_accessor :last_response_code
 
-  def self.attribute_keys=(keys)
-    @attribute_keys = keys
-    attr_accessor *keys
-  end
-
-  def self.attribute_keys
-    @attribute_keys
-  end
-
   DEFAULT_TIMEOUT = 10000
   DEFAULT_RETRIES = 3
+
+  def initialize(attributes={})
+    self.attributes = attributes
+  end
 
   class << self
     attr_accessor :host, :resource_path,
@@ -118,40 +115,6 @@ class LogicalModel
   def self.resource_uri(id=nil)
     sufix  = (id.nil?)? "" : "/#{id}"
     "#{url_protocol_prefix}#{host}#{resource_path}#{sufix}"
-  end
-
-  def initialize(attributes={})
-    self.attributes = attributes
-  end
-
-  def attributes
-    attrs = self.class.attribute_keys.inject(ActiveSupport::HashWithIndifferentAccess.new) do |result,key|
-      result[key] = read_attribute_for_validation(key)
-      result
-    end
-
-    unless self.class.has_many_keys.blank?
-      self.class.has_many_keys.inject(attrs) do |result,key|
-        result["#{key}_attributes"] = send(key).map {|a| a.attributes}
-        result
-      end
-    end
-    attrs.reject {|key, value| key == "_id" && value.blank?}
-  end
-
-  def attributes=(attrs)
-    sanitize_for_mass_assignment(attrs).each{|k,v| send("#{k}=",v) if respond_to?("#{k}=")}
-  end
-
-  ##
-  # Will parse JSON string and initialize classes for all hashes in json_string[collection].
-  #
-  # @param json_string [JSON String] This JSON should have format: {collection: [...], total: X}
-  #
-  def self.from_json(json_string)
-    parsed = ActiveSupport::JSON.decode(json_string)
-    collection = parsed["collection"].map{|i|self.new(i)}
-    return { :collection => collection, :total => parsed["total"].to_i }
   end
 
   def persisted?
