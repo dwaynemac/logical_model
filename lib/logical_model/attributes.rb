@@ -37,6 +37,7 @@ class LogicalModel
       #       attribute :att_name
       #     end
       def attribute(name)
+        @attribute_keys = [] if @attribute_keys.nil?
         @attribute_keys << name
         attr_accessor name
       end

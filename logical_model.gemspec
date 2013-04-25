@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
     "lib/logical_model.rb",
     "lib/logical_model/has_many_keys.rb",
     "lib/safe_log.rb",
-    "lib/ssl_support.rb",
+    "lib/url_helper.rb",
     "lib/typhoeus_fix/array_decoder.rb",
     "logical_model.gemspec",
     "models/user.rb",

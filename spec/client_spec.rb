@@ -38,7 +38,7 @@ describe "LogicalModel User client" do
     it { should respond_to 'has_many_keys'}
   end
 
-  describe "ssl_support" do
+  describe "url_helper" do
     it { should respond_to 'use_ssl=' }
     it { should respond_to 'use_ssl?' }
     it { should respond_to 'url_protocol_prefix' }
@@ -49,6 +49,22 @@ describe "LogicalModel User client" do
         User.use_ssl?.should be_false
         class User; force_ssl; end;
         User.use_ssl?.should be_true
+      end
+    end
+    describe "set_resource_host" do
+      it { should respond_to 'set_resource_host' }
+      it "sets resource_path" do
+        User.resource_path.should == "/api/v1/users"
+        class User; set_resource_path("new_path"); end;
+        User.resource_path.should == "new_path"
+      end
+    end
+    describe "set_resource_path" do
+      it { should respond_to 'set_resource_path'}
+      it "sets resource_host" do
+        User.host.should == "localhost:3000"
+        class User; set_resource_host("new_host"); end;
+        User.host.should == "new_host"
       end
     end
   end

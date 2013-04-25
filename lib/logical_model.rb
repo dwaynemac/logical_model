@@ -5,7 +5,7 @@ require 'active_support/all' # todo migrate to yajl
 require 'kaminari'
 
 require 'logical_model/rest_actions'
-require 'logical_model/ssl_support'
+require 'logical_model/url_helper'
 require 'logical_model/safe_log'
 require 'logical_model/has_many_keys'
 require 'logical_model/api_key'
@@ -29,9 +29,11 @@ require 'logical_model/attributes'
 #
 # Usage:
 #  class RemoteResource < LogicalModel
-#    self.host = "http://remote.server"
-#    self.resource_path = "/api/remote/path"
-#    self.attribute_keys = [:id, :attribute_a, :attribute_b]
+#    set_resource_url "remote.server", "/api/remote/path"
+#
+#    attribute :id
+#    attribute :attribute_a
+#    attribute :attribute_b
 #
 #    validates_presence_of :id
 #  end
@@ -49,7 +51,7 @@ class LogicalModel
 
   include LogicalModel::Attributes
   include LogicalModel::RESTActions
-  include LogicalModel::SslSupport
+  include LogicalModel::UrlHelper
   include LogicalModel::ApiKey
   include LogicalModel::SafeLog
   include LogicalModel::HasManyKeys
@@ -76,8 +78,7 @@ class LogicalModel
   end
 
   class << self
-    attr_accessor :host, :resource_path,
-                  :timeout, :retries,
+    attr_accessor :timeout, :retries,
                   :json_root
 
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
@@ -110,11 +111,6 @@ class LogicalModel
 
   def json_root
     @json_root ||= self.class.to_s.underscore
-  end
-
-  def self.resource_uri(id=nil)
-    sufix  = (id.nil?)? "" : "/#{id}"
-    "#{url_protocol_prefix}#{host}#{resource_path}#{sufix}"
   end
 
   def persisted?

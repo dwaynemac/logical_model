@@ -54,8 +54,10 @@ In your Gemfile:
 In a model file:
 
     class RemoteResource < LogicalModel
-      self.host = "http://remote.server"
-      self.resource_path = "/api/remote/path"
+
+      set_resource_host "remote.server"
+      set_resource_path "/api/remote/path"
+      # equivalente: set_resource_url "remote.server", "/api/path"
 
       attribute :id
       attribute :attribute_a
