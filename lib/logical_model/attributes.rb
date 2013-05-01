@@ -42,6 +42,8 @@ class LogicalModel
         attr_accessor name
       end
 
+      # overrides attributes with given keys.
+      # @param keys [Array<Symbol>]
       def attribute_keys=(keys)
         @attribute_keys = keys
         attr_accessor *keys
