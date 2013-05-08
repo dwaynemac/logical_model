@@ -43,7 +43,7 @@ class LogicalModel
       end
 
       def logger
-        Logger.new(self.log_path || "log/logical_model.log")
+        @logger ||= Logger.new(self.log_path || "log/logical_model.log")
       end
 
       # Filters api_key
