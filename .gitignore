@@ -52,3 +52,4 @@ pkg
 Gemfile.lock
 db/*
 logs/*
+.ruby-version
