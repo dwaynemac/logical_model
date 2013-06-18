@@ -7,6 +7,12 @@ class LogicalModel
 
     module ClassMethods
 
+      def has_many(key)
+        @has_many_keys ||= []
+        @has_many_keys << key
+        has_many_keys = @has_many_keys
+      end
+
       def has_many_keys=(keys)
         @has_many_keys = keys
         attr_accessor *keys
