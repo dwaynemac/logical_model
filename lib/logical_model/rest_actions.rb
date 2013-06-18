@@ -175,10 +175,47 @@ class LogicalModel
       #  Following methods are API specific.
       #  They assume we are using a RESTfull API.
       #  for get, put, delete :id is expected
-      #  for post, put attributes are excepted under class_name directly. eg. put( {:id => 1, :class_name => {:attr => "new value for attr"}} )
+      #  for post, put attributes are excepted under class_name directly.
+      #    eg. put( {:id => 1, :class_name => {:attr => "new value for attr"}} )
       #
-      #  On error (400) a "errors" is expected.
+      #  On error (400) a "errors" key is expected in response
       #  ============================================================================================================
+
+      # @param options [Hash] will be forwarded to API
+      def async_all(options={})
+        options = self.merge_key(options)
+        request = Typhoeus::Request.new(resource_uri, :params => options)
+        request.on_complete do |response|
+          if response.code >= 200 && response.code < 400
+            log_ok(response)
+
+            result_set = self.from_json(response.body)
+            collection = result_set[:collection]
+
+            yield collection
+          else
+            log_failed(response)
+          end
+        end
+        self.hydra.queue(request)
+      end
+
+      def all(options={})
+        result = nil
+        self.retries.times do
+          begin
+            async_all(options){|i| result = i}
+            Timeout::timeout(self.timeout/1000) do
+              self.hydra.run
+            end
+            break unless result.nil?
+          rescue Timeout::Error
+            self.logger.warn("timeout")
+            result = nil
+          end
+        end
+        result
+      end
 
       # Asynchronic Pagination
       #  This pagination won't block excecution waiting for result, pagination will be enqueued in Objectr#hydra.
@@ -397,14 +434,20 @@ class LogicalModel
   end
 
   ##
-  # Will parse JSON string and initialize classes for all hashes in json_string[collection].
+  # Will parse JSON string and initialize classes for all hashes in json_string[collection_key].
   #
   # @param json_string [JSON String] This JSON should have format: {collection: [...], total: X}
   #
   def self.from_json(json_string)
-    parsed = ActiveSupport::JSON.decode(json_string)
-    collection = parsed["collection"].map{|i|self.new(i)}
-    return { :collection => collection, :total => parsed["total"].to_i }
+    parsed_response = ActiveSupport::JSON.decode(json_string)
+    parsed_collection = collection_key.nil?? parsed_response : parsed_response[collection_key]
+    collection = parsed_collection.map{|i| self.new(i)}
+
+    if total_key
+      {collection: collection, total: parsed_response[total_key].to_i}
+    else
+      { collection: collection }
+    end
   end
 
 end

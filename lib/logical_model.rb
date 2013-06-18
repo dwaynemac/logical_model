@@ -5,6 +5,7 @@ require 'active_support/all' # todo migrate to yajl
 require 'kaminari'
 
 require 'logical_model/hydra'
+require 'logical_model/responses_configuration'
 require 'logical_model/rest_actions'
 require 'logical_model/url_helper'
 require 'logical_model/safe_log'
@@ -52,6 +53,7 @@ require 'logical_model/attributes'
 class LogicalModel
 
   include LogicalModel::Hydra
+  include LogicalModel::ResponsesConfiguration
   include LogicalModel::Attributes
   include LogicalModel::RESTActions
   include LogicalModel::UrlHelper
