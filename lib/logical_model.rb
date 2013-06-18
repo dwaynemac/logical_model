@@ -4,6 +4,7 @@ require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl
 require 'kaminari'
 
+require 'logical_model/hydra'
 require 'logical_model/rest_actions'
 require 'logical_model/url_helper'
 require 'logical_model/safe_log'
@@ -50,6 +51,7 @@ require 'logical_model/attributes'
 #  RemoteResource#destroy
 class LogicalModel
 
+  include LogicalModel::Hydra
   include LogicalModel::Attributes
   include LogicalModel::RESTActions
   include LogicalModel::UrlHelper
@@ -86,18 +88,6 @@ class LogicalModel
     def timeout; @timeout ||= DEFAULT_TIMEOUT; end
     def retries; @retries ||= DEFAULT_RETRIES; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
-
-    def use_hydra(hydra)
-      self.hydra=(hydra)
-    end
-
-    def hydra
-      @@hydra
-    end
-
-    def hydra=(hydra)
-      @@hydra = hydra
-    end
 
     def validates_associated(*associations)
       associations.each do |association|
