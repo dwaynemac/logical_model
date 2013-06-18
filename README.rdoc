@@ -1,3 +1,4 @@
+{<img src="https://codeclimate.com/github/dwaynemac/logical_model.png" />}[https://codeclimate.com/github/dwaynemac/logical_model]
 = logical_model
 
 LogicalModel allows to use a RESTfull resources as models.
