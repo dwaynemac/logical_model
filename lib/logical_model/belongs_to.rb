@@ -14,17 +14,26 @@ class LogicalModel
         attr_class = get_attr_class(key, options)
 
         define_method("#{key}=") do |param|
-          param.stringify_keys!
-
-          instance_variable_set("@#{key}_id", param['id']) if param['id']
-
-          instance = attr_class.new(param)
+          if param.is_a?(Hash)
+            param.stringify_keys!
+            instance_variable_set("@#{key}_id", param['id']) if param['id']
+            instance = attr_class.new(param)
+          elsif param.is_a?(attr_class)
+            instance_variable_set("@#{key}_id", param.id)
+            instance = param
+          else
+            # ...
+          end
 
           instance_variable_set("@#{key}",instance)
         end
 
         define_method(key) do
-          eval("@#{key}")
+          instance = eval("@#{key}")
+          if instance.nil?
+            instance = attr_class.find(eval("#{key}_id"))
+          end
+          instance
         end
 
         # TODO define_method("#{key}_attribute="){|param| ... }
