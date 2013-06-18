@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "logical_model"
-  s.version = "0.5.4"
+  s.version = "0.5.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dwayne Macgowan"]
@@ -36,6 +36,8 @@ Gem::Specification.new do |s|
     "lib/logical_model/attributes.rb",
     "lib/logical_model/belongs_to.rb",
     "lib/logical_model/has_many_keys.rb",
+    "lib/logical_model/hydra.rb",
+    "lib/logical_model/responses_configuration.rb",
     "lib/logical_model/rest_actions.rb",
     "lib/logical_model/safe_log.rb",
     "lib/logical_model/url_helper.rb",
