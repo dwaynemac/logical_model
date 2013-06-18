@@ -87,6 +87,10 @@ class LogicalModel
     def retries; @retries ||= DEFAULT_RETRIES; end
     def delete_multiple_enabled?; @enable_delete_multiple ||= false; end
 
+    def use_hydra(hydra)
+      self.hydra=(hydra)
+    end
+
     def hydra
       @@hydra
     end
