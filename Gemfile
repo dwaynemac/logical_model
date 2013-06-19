@@ -8,15 +8,16 @@ gem "ethon", "0.4.2"
 gem "kaminari", '~> 0.13.0'
 
 group :development, :test do
+  gem 'rake'
   gem 'activerecord'
   gem "shoulda"
   gem "bundler", "~> 1.2.2"
   gem "jeweler", "~> 1.6.4"
   gem "rcov"
-	gem "sqlite3-ruby"
-	gem "sinatra", " ~> 1.2.6"
-	gem "json"
-	gem 'gemcutter'
+  gem "sqlite3-ruby"
+  gem "sinatra", " ~> 1.2.6"
+  gem "json"
+  gem 'gemcutter'
 	
   gem "rspec-rails"
 
