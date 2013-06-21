@@ -1,3 +1,4 @@
+{<img src="https://badge.fury.io/rb/logical_model.png" alt="Gem Version" />}[http://badge.fury.io/rb/logical_model]
 {<img src="https://travis-ci.org/dwaynemac/logical_model.png" />}[https://travis-ci.org/dwaynemac/logical_model]
 {<img src="https://codeclimate.com/github/dwaynemac/logical_model.png" />}[https://codeclimate.com/github/dwaynemac/logical_model]
 = logical_model
