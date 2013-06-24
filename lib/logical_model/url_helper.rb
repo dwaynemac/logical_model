@@ -72,6 +72,22 @@ class LogicalModel
         ssl_recommended_environments = %W(production staging)
         ssl_recommended_environments.include?(defined?(Rails)? Rails.env : ENV['RACK_ENV'] )
       end
+
+      # Requests done within the block will go to new path.
+      #
+      # @example
+      #   @resource_path # '/comments'
+      #   do_with_resource_path("users/#{@user_id}/#{@resource_path}"}/") do
+      #     @resource_path # '/users/23/comments'
+      #   end
+      #
+      # @param [String] new_path
+      def do_with_resource_path(new_path)
+        bkp_path = @resource_path
+        @resource_path = new_path
+        yield
+        @resource_path = bkp_path
+      end
     end
 
   end

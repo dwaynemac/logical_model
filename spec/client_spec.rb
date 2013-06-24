@@ -104,6 +104,22 @@ describe "LogicalModel User client" do
         User.host.should == "new_host"
       end
     end
+    describe "do_with_resource_path" do
+      before do
+        User.set_resource_path("/api/v1/users")
+      end
+      it "changes resource_path within the block" do
+        User.do_with_resource_path('/api/v1/accounts/12/users') do
+          User.resource_path.should == '/api/v1/accounts/12/users'
+        end
+      end
+      it "restores path after block" do
+        User.do_with_resource_path('/api/v1/accounts/12/users') do
+          # ...
+        end
+        User.resource_path.should == "/api/v1/users"
+      end
+    end
   end
 
   describe "safe_log" do
