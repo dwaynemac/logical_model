@@ -111,7 +111,7 @@ DEPENDENCIES
   activemodel
   activerecord
   activesupport
-  bundler (~> 1.2.2)
+  bundler (>= 1.2.2)
   ethon (= 0.4.2)
   gemcutter
   guard-rspec
@@ -119,6 +119,7 @@ DEPENDENCIES
   json
   kaminari (~> 0.13.0)
   libnotify
+  rake
   rb-inotify
   rcov
   rspec-rails

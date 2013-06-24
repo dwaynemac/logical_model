@@ -11,7 +11,7 @@ group :development, :test do
   gem 'rake'
   gem 'activerecord'
   gem "shoulda"
-  gem "bundler", "~> 1.2.2"
+  gem "bundler", ">= 1.2.2"
   gem "jeweler", "~> 1.6.4"
   gem "rcov"
   gem "sqlite3-ruby"
