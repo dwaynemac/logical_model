@@ -32,6 +32,7 @@ class LogicalModel
           instance = eval("@#{key}")
           if instance.nil?
             instance = attr_class.find(eval("#{key}_id"))
+            instance_variable_set("@#{key}",instance)
           end
           instance
         end
