@@ -60,7 +60,10 @@ In a model file:
 
       set_resource_host "remote.server"
       set_resource_path "/api/remote/path"
-      # equivalente: set_resource_url "remote.server", "/api/path"
+      # equivalent: set_resource_url "remote.server", "/api/remote/path"
+
+      # optional
+      set_api_key(:token, 'asdfasdf') # will add token=asdfasdf to all requests.
 
       attribute :id
       attribute :attribute_a
