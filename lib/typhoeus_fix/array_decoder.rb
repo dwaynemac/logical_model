@@ -14,82 +14,65 @@
 #    end
 #
 module TyphoeusFix
-
+  # Recursively decodes Typhoeus encoded arrays in given Hash.
+  #
+  # @example Use directly in a Rails controller.
+  #    class ApplicationController
+  #       before_filter :decode_typhoeus_arrays
+  #    end
+  #
+  # @author Dwayne Macgowan
+  #
   def decode_typhoeus_arrays
-    deep_decode(params)
+    decode!(params)
   end
 
-  # Recursively decode Typhoeus encoded arrays
-  def deep_decode(hash)
+  # Recursively decodes Typhoeus encoded arrays in given Hash.
+  #
+  # @param hash [Hash]. This Hash will be modified!
+  #
+  # @return [Hash] Hash with properly decoded nested arrays.
+  def decode!(hash)
     return hash unless hash.is_a?(Hash)
     hash.each_pair do |key,value|
       if value.is_a?(Hash)
-        deep_decode(value)
-        hash[key] = value.decode_typhoeus_array
+        decode!(value)
+        hash[key] = convert(value)
       end
     end
-  end
-end
-
-# Add Hash#is_typhoeus_array? method
-class Hash
-
-  # Checks if hash is an Array encoded as a hash.
-  # Specifically will check for the hash to have this form: {'0' => v0, '1' => v1, .., 'n' => vN }
-  # @return [TrueClass]
-  def im_an_array_typhoeus_encoded?
-    return false if self.empty?
-    #return if array is empty or the key is not a valid number
-    return false if self.empty? || self.keys.first.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil
-    self.keys.map {|k| k.to_i}.sort == (0...self.keys.size).map {|i| i}
+    hash
   end
 
-  # If the hash is an array encoded by typhoeus an array is returned
+  def decode(hash)
+    decode!(hash.dup)
+  end
+
+  private
+
+  # Checks if Hash is an Array encoded as a Hash.
+  # Specifically will check for the Hash to have this
+  # form: {'0' => v0, '1' => v1, .., 'n' => vN }
+  #
+  # @param hash [Hash]
+  #
+  # @return [Boolean] True if its a encoded Array, else false.
+  def encoded?(hash)
+    return false if hash.empty?
+    keys = hash.keys.map{|i| i.to_i if i.respond_to?(:to_i)}.sort
+    keys == hash.keys.size.times.to_a
+  end
+
+  # If the Hash is an array encoded by typhoeus an array is returned
   # else the self is returned
   #
-  # @see im_an_array_typhoeus_encoded?
+  # @param hash [Hash] The Hash to convert into an Array.
   #
-  # @return [Array/Hash]
-  def decode_typhoeus_array
-    if self.im_an_array_typhoeus_encoded?
-      Hash[self.sort].values
+  # @return [Arraya/Hash]
+  def convert(hash)
+    if encoded?(hash)
+      Hash[hash.sort].values
     else
-      self
+      hash
     end
   end
 end
-
-
-
-# Rack Middleware to fix Typhoeus arrays encoding
-# TODO this middleware didn't work, when fixed use it and remove filter from ApplicationController
-=begin
-module Typhoeus
-  class ArraysDecoder
-    def initialize(app)
-      @app = app
-    end
-
-    def call(env)
-
-      params = env["action_dispatch.request.parameters"]
-      decode_typho_arrays(params)
-      env["action_dispatch.request.parameters"] = params
-      @app.call(env)
-    end
-
-    private
-
-    # Recursively decode Typhoeus encoded arrays
-    def decode_typho_arrays(hash)
-      return hash unless hash.is_a?(Hash)
-      hash.each_pair do |key,value|
-        if value.is_a?(Hash)
-          decode_typho_arrays(value)
-          hash[key] = value.decode_typhoeus_array
-        end
-      end
-    end
-  end
-end
-=end
