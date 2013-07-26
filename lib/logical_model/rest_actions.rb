@@ -171,6 +171,17 @@ class LogicalModel
 
       attr_accessor :enable_delete_multiple
 
+      # @param header [Hash]
+      def set_default_headers(header)
+        @headers = header
+      end
+
+      # User specified default headers
+      # @return [Hash]
+      def default_headers
+        @headers
+      end
+
       #  ============================================================================================================
       #  Following methods are API specific.
       #  They assume we are using a RESTfull API.
@@ -184,7 +195,7 @@ class LogicalModel
       # @param options [Hash] will be forwarded to API
       def async_all(options={})
         options = self.merge_key(options)
-        request = Typhoeus::Request.new(resource_uri, :params => options)
+        request = Typhoeus::Request.new(resource_uri, params: options, headers: default_headers)
         request.on_complete do |response|
           if response.code >= 200 && response.code < 400
             log_ok(response)
@@ -235,7 +246,7 @@ class LogicalModel
 
         options = self.merge_key(options)
 
-        request = Typhoeus::Request.new(resource_uri, :params => options)
+        request = Typhoeus::Request.new(resource_uri, params: options, headers: default_headers)
         request.on_complete do |response|
           if response.code >= 200 && response.code < 400
             log_ok(response)
@@ -296,7 +307,7 @@ class LogicalModel
 
         options = self.merge_key(options)
 
-        request = Typhoeus::Request.new(resource_uri, :params => options)
+        request = Typhoeus::Request.new(resource_uri, params: options, headers: default_headers)
         request.on_complete do |response|
           if response.code >= 200 && response.code < 400
             log_ok(response)
