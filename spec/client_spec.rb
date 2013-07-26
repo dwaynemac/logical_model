@@ -27,42 +27,6 @@ describe "LogicalModel User client" do
     end
   end
 
-  describe "belongs_to :account" do
-    before do
-      class Account < LogicalModel
-        attribute :id
-        attribute :name
-      end
-      class User < LogicalModel
-        belongs_to :account
-      end
-
-      @account = Account.new(id: 1, name: 'asdf')
-      Account.stub(:find).with(1).and_return(@account)
-    end
-    it "responds to account_id" do
-      User.new.should respond_to :account_id
-    end
-    it "responds to account" do
-      User.new.should respond_to :account
-    end
-    it "allows to set association_id=x" do
-      u = User.new
-      u.account_id = 1
-      u.account.should == @account
-    end
-    it "allows to set association=Object" do
-      u = User.new
-      u.account = @account
-      u.account_id.should == 1
-    end
-    it "allows to set association=AttributesHash" do
-      u = User.new
-      u.account = {id: 3, name: 'account_name'}
-      u.account.should be_a Account
-      u.account.name.should == 'account_name'
-    end
-  end
 
   describe "RESTActions" do
     %W(find async_find paginate async_paginate delete delete_multiple).each do |class_action|
@@ -70,10 +34,52 @@ describe "LogicalModel User client" do
     end
   end
 
-  describe "has_many_keys" do
-    it { should respond_to 'has_many_keys=' }
-    it { should respond_to 'has_many_keys'}
+  describe "associations" do
+    describe "belongs_to :account" do
+      before do
+        class Account < LogicalModel
+          attribute :id
+          attribute :name
+        end
+        class User < LogicalModel
+          belongs_to :account
+        end
+
+        @account = Account.new(id: 1, name: 'asdf')
+        Account.stub(:find).with(1).and_return(@account)
+      end
+      it "responds to account_id" do
+        User.new.should respond_to :account_id
+      end
+      it "responds to account" do
+        User.new.should respond_to :account
+      end
+      it "allows to set association_id=x" do
+        u = User.new
+        u.account_id = 1
+        u.account.should == @account
+      end
+      it "allows to set association=Object" do
+        u = User.new
+        u.account = @account
+        u.account_id.should == 1
+      end
+      it "allows to set association=AttributesHash" do
+        u = User.new
+        u.account = {id: 3, name: 'account_name'}
+        u.account.should be_a Account
+        u.account.name.should == 'account_name'
+      end
+    end
+
+    describe "has_many_keys" do
+      it { should respond_to 'has_many_keys=' }
+      it { should respond_to 'has_many_keys'}
+    end
+
+
   end
+
 
   describe "url_helper" do
     it { should respond_to 'use_ssl=' }

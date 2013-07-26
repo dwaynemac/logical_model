@@ -9,8 +9,7 @@ require 'logical_model/responses_configuration'
 require 'logical_model/rest_actions'
 require 'logical_model/url_helper'
 require 'logical_model/safe_log'
-require 'logical_model/has_many_keys'
-require 'logical_model/belongs_to'
+require 'logical_model/associations'
 require 'logical_model/api_key'
 require 'logical_model/attributes'
 
@@ -59,8 +58,7 @@ class LogicalModel
   include LogicalModel::UrlHelper
   include LogicalModel::ApiKey
   include LogicalModel::SafeLog
-  include LogicalModel::HasManyKeys
-  include LogicalModel::BelongsTo
+  include LogicalModel::Associations
 
   # include ActiveModel Modules that are usefull
   extend ActiveModel::Naming
