@@ -9,6 +9,8 @@ It was written following this tutorial: http://www.slideshare.net/ihower/service
 
 == Assumptions
 
+OUTDATED -- some of this assumpitions are now configurable. Will update this readme as soon as possible.
+
 LogicalModel makes some assumptions about the service you'll be consuming
 
 * resource service is RESTfull
