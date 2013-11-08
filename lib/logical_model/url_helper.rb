@@ -64,12 +64,12 @@ class LogicalModel
 
       # Returns true if ssl is recommended
       #
-      # - requests to localhost -> true
-      # - other -> false
+      # - requests to localhost -> false
+      # - other -> true
       #
       # @return [Boolean]
       def ssl_recommended?
-        (@host && @host =~ /localhost/)
+        (@host && !(@host =~ /localhost/))
       end
 
       # Requests done within the block will go to new path.
