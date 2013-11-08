@@ -94,6 +94,17 @@ describe "LogicalModel User client" do
         User.use_ssl?.should be_true
       end
     end
+    describe "ssl_recommended?" do
+      it "returns false for localhost domains" do
+        User.host.should == "localhost:3000"
+        User.ssl_recommended?.should be_true
+      end
+      it "returns true for other domains" do
+        class User; set_resource_host("new_host"); end;
+        User.host.should == "new_host"
+        User.ssl_recommended?.should be_false
+      end
+    end
     describe "set_resource_host" do
       it { should respond_to 'set_resource_host' }
       it "sets resource_path" do

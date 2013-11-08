@@ -62,15 +62,14 @@ class LogicalModel
         (use_ssl?)? "https://" : "http://"
       end
 
-      # Returns true if ssl is recommended according to environment.
+      # Returns true if ssl is recommended
       #
-      # - production, staging -> true
+      # - requests to localhost -> true
       # - other -> false
       #
       # @return [Boolean]
       def ssl_recommended?
-        ssl_recommended_environments = %W(production staging)
-        ssl_recommended_environments.include?(defined?(Rails)? Rails.env : ENV['RACK_ENV'] )
+        (@host && @host =~ /localhost/)
       end
 
       # Requests done within the block will go to new path.
