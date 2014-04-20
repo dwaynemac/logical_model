@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "logical_model"
-  s.version = "0.5.11"
+  s.version = "0.5.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dwayne Macgowan"]
-  s.date = "2014-04-19"
+  s.date = "2014-04-20"
   s.description = "LogicalModel allows to use a resource as a model. It is based on web presentation http://www.slideshare.net/ihower/serviceoriented-design-and-implement-with-rails3"
   s.email = "dwaynemac@gmail.com"
   s.extra_rdoc_files = [
@@ -43,11 +43,13 @@ Gem::Specification.new do |s|
     "lib/logical_model/rest_actions.rb",
     "lib/logical_model/safe_log.rb",
     "lib/logical_model/url_helper.rb",
+    "lib/string_helper.rb",
     "lib/typhoeus_fix/array_decoder.rb",
     "log/logical_model.log",
     "logical_model.gemspec",
     "models/user.rb",
     "spec/client_spec.rb",
+    "spec/lib/logical_model/associations/has_many_keys_spec.rb",
     "test/helper.rb",
     "test/test_logical_model.rb",
     "test/typhoeus_mocks.rb"
@@ -67,6 +69,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
       s.add_runtime_dependency(%q<ethon>, ["= 0.4.2"])
       s.add_runtime_dependency(%q<kaminari>, ["~> 0.13.0"])
+      s.add_development_dependency(%q<debugger>, [">= 0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<activerecord>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
@@ -87,6 +90,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
       s.add_dependency(%q<ethon>, ["= 0.4.2"])
       s.add_dependency(%q<kaminari>, ["~> 0.13.0"])
+      s.add_dependency(%q<debugger>, [">= 0"])
       s.add_dependency(%q<rake>, [">= 0"])
       s.add_dependency(%q<activerecord>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
@@ -108,6 +112,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<typhoeus>, ["= 0.5.0.alpha"])
     s.add_dependency(%q<ethon>, ["= 0.4.2"])
     s.add_dependency(%q<kaminari>, ["~> 0.13.0"])
+    s.add_dependency(%q<debugger>, [">= 0"])
     s.add_dependency(%q<rake>, [">= 0"])
     s.add_dependency(%q<activerecord>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
