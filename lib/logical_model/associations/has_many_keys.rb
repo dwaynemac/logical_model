@@ -1,3 +1,5 @@
+require 'string_helper'
+
 class LogicalModel
   module Associations
     module HasManyKeys
@@ -36,9 +38,9 @@ class LogicalModel
 
         def get_attr_class(key, options)
           if options[:class]
-            options[:class].is_a?(String) ? options[:class].constantize : options[:class]
+            options[:class].is_a?(String) ? StringHelper.constantize(options[:class]) : options[:class]
           else
-            key.to_s.singularize.camelize.constantize
+            StringHelper.to_class(key)
           end
         end
 
@@ -55,25 +57,25 @@ class LogicalModel
           end
 
           # Setter
-          # this method loads the contact attributes recieved by logical model from the service
+          # this method loads the associations attributes recieved by logical model from the service
+          # it also allows loading instanciated objects
           define_method "#{association}=" do |params|
             collection = []
             params.each do |attr_params|
-              if attr_params["_type"].present?
-                attr_class = attr_params.delete("_type").to_s.constantize
+              if attr_params.is_a?(attr_class)
+                # in this case we recieved instanciated objects
+                collection << attr_params
+              else
+                # in this case we recieved object attributes, we instanciate here
+                collection << attr_class.new(attr_params)
               end
-              collection << attr_class.new(attr_params)
             end
             instance_variable_set("@#{association}", collection)
           end
 
           # Initialize instance of associated object
-          define_method "new_#{association.to_s.singularize}" do |attr_params|
-            if attr_params["_type"].present?
-              clazz = attr_params.delete(:_type).constantize
-            else
-              clazz = attr_class
-            end
+          define_method "new_#{StringHelper.singularize(association.to_s)}" do |attr_params|
+            clazz = attr_class
 
             return unless clazz
 
@@ -87,9 +89,6 @@ class LogicalModel
             array = []
             key_attributes.each do |attr_params|
               attr_params.to_hash.symbolize_keys!
-              if attr_params["_type"].present?
-                attr_class = attr_params.delete("_type").to_s.constantize
-              end
               array << attr_class.new(attr_params)
             end
             instance_variable_set("@#{association}", array)

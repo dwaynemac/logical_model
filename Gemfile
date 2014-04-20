@@ -8,6 +8,7 @@ gem "ethon", "0.4.2"
 gem "kaminari", '~> 0.13.0'
 
 group :development, :test do
+  gem 'debugger'
   gem 'rake'
   gem 'activerecord'
   gem "shoulda"
