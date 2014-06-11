@@ -33,12 +33,12 @@ class LogicalModel
       end
 
       def find_with_cache(id, params = {})
-        # generate key based on params
+        # Generate key based on params
         cache_key = self.cache_key(id, params)
-        # if there is a cached value return it
-        # otherwise continue with regular find
+        # If there is a cached value return it
         Rails.cache.fetch(cache_key, :expires_in => 1.minute) do
-          puts 'calling find without cache'
+          # Otherwise continue with regular find
+          self.logger.debug 'LogicalModel Log CACHE: Calling find without cache'
           find_without_cache(id, params)
         end
         
