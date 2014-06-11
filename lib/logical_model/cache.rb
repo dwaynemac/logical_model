@@ -22,8 +22,21 @@ class LogicalModel
         model_name = self.class.to_s.pluralize.underscore
         self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
         Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        _save_without_cache
       end
       alias_method_chain :_save, :cache
+
+      def _update(params)
+        super
+      end
+
+      def _update_with_cache(params)
+        model_name = self.class.to_s.pluralize.underscore
+        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
+        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        _update_without_cache params
+      end
+      alias_method_chain :_update, :cache
     end
 
     # adds following setters
