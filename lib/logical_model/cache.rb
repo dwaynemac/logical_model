@@ -18,6 +18,8 @@ class LogicalModel
     # adds following setters
     # - 
     module ClassMethods
+      attr_accessor :expires_in
+
       # Will return key for cache
       # @param id [String] (nil)
       # @param params [Hash]
@@ -36,7 +38,7 @@ class LogicalModel
         # Generate key based on params
         cache_key = self.cache_key(id, params)
         # If there is a cached value return it
-        Rails.cache.fetch(cache_key, :expires_in => 1.minute) do
+        Rails.cache.fetch(cache_key, :expires_in => self.expires_in || 10.minutes) do
           # Otherwise continue with regular find
           self.logger.debug 'LogicalModel Log CACHE: Calling find without cache'
           find_without_cache(id, params)
