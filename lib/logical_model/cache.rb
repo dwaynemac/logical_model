@@ -38,7 +38,7 @@ class LogicalModel
       end
       alias_method_chain :_update, :cache
 
-      def destroy
+      def _destroy
         super
       end
 
@@ -81,6 +81,29 @@ class LogicalModel
       end
       alias_method_chain :find, :cache
 
+      def delete(id, params={})
+        super(id, params)
+      end
+
+      def delete_with_cache(id, params = {})
+        model_name = self.to_s.pluralize.underscore
+        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{id}-.*"
+        Rails.cache.delete_matched(/#{model_name}\/#{id}-.*/)
+        delete_without_cache(id, params)
+      end
+      alias_method_chain :delete, :cache
+
+      def delete_multiple(ids, params={})
+        super(ids, params)
+      end
+
+      def delete_multiple_with_cache(ids, params = {})
+        model_name = self.to_s.pluralize.underscore
+        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/(#{ids.join('|')})-.*"
+        Rails.cache.delete_matched(/#{model_name}\/(#{ids.join('|')})-.*/)
+        delete_multiple_without_cache(ids, params)
+      end
+      alias_method_chain :delete_multiple, :cache
     end
 
   end
