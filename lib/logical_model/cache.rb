@@ -37,10 +37,20 @@ class LogicalModel
         _update_without_cache params
       end
       alias_method_chain :_update, :cache
+
+      def destroy
+        super
+      end
+
+      def _destroy_with_cache
+        model_name = self.class.to_s.pluralize.underscore
+        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
+        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        _destroy_without_cache
+      end
+      alias_method_chain :_destroy, :cache      
     end
 
-    # adds following setters
-    # - 
     module ClassMethods
       attr_accessor :expires_in
 
