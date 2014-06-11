@@ -13,6 +13,17 @@ class LogicalModel
       def initialize_loaded_at
         self.loaded_at = Time.now
       end
+
+      def _save
+        super
+      end
+
+      def _save_with_cache
+        model_name = self.class.to_s.pluralize.underscore
+        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
+        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+      end
+      alias_method_chain :_save, :cache
     end
 
     # adds following setters
@@ -46,6 +57,7 @@ class LogicalModel
         
       end
       alias_method_chain :find, :cache
+
     end
 
   end
