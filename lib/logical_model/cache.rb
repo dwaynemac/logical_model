@@ -64,22 +64,40 @@ class LogicalModel
         cache_key = "#{model_name}/#{id}-#{params_hash}"
       end
 
-      def find(id, params={})
+      def async_find(id, params={})
         super(id, params)
       end
 
-      def find_with_cache(id, params = {})
+      def async_find_with_cache(id, params = {}, &block)
         # Generate key based on params
         cache_key = self.cache_key(id, params)
         # If there is a cached value return it
-        Rails.cache.fetch(cache_key, :expires_in => self.expires_in || 10.minutes) do
-          # Otherwise continue with regular find
-          self.logger.debug 'LogicalModel Log CACHE: Calling find without cache'
-          find_without_cache(id, params)
+        self.logger.debug "LogicalModel Log CACHE: Reading cache key=#{cache_key}"
+        cached_result = Rails.cache.read(cache_key)
+        if cached_result
+          yield cached_result
+        else
+          self.logger.debug 'LogicalModel Log CACHE: Cache not present. Calling find_async without cache'
+          async_find_without_cache(id, params, &block)
         end
-        
       end
-      alias_method_chain :find, :cache
+      alias_method_chain :async_find, :cache
+
+      def async_find_response(id, params={}, body)
+        super(id, params, body)
+      end
+
+      def async_find_response_with_cache(id, params={}, body)
+        # remove params not used in cache_key
+        %w(app_key token).each {|k| params.delete(k) }
+        cache_value = async_find_response_without_cache(id, params, body)
+        # Generate key based on params
+        cache_key = self.cache_key(id, params)
+        self.logger.debug "LogicalModel Log CACHE: Writing cache key=#{cache_key}"
+        Rails.cache.write(cache_key, cache_value, :expires_in => self.expires_in || 10.minutes)
+        cache_value
+      end
+      alias_method_chain :async_find_response, :cache
 
       def delete(id, params={})
         super(id, params)
