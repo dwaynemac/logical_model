@@ -34,6 +34,12 @@ describe LogicalModel::Cache do
       model.loaded_at.should_not be_nil
     end
 
+    it "should use params to build cache_key" do
+      cache_key = Example.cache_key('id', {})
+      cache_key2 = Example.cache_key('id', {:param => true})
+      cache_key.should_not == cache_key2
+    end
+
     it "should chain find_async" do
       Example.should respond_to :async_find_with_cache
       Example.should respond_to :async_find_without_cache
