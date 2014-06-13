@@ -21,31 +21,31 @@ class LogicalModel
       def _save_with_cache
         model_name = self.class.to_s.pluralize.underscore
         self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
-        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        self.class.cache_store.delete_matched(/#{model_name}\/#{self.id}-.*/)
         _save_without_cache
       end
       alias_method_chain :_save, :cache
 
-      def _update(params)
+      def _update(params={})
         super
       end
 
-      def _update_with_cache(params)
+      def _update_with_cache(params={})
         model_name = self.class.to_s.pluralize.underscore
         self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
-        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        self.class.cache_store.delete_matched(/#{model_name}\/#{self.id}-.*/)
         _update_without_cache params
       end
       alias_method_chain :_update, :cache
 
-      def _destroy
+      def _destroy(params={})
         super
       end
 
-      def _destroy_with_cache
+      def _destroy_with_cache(params={})
         model_name = self.class.to_s.pluralize.underscore
         self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.id}-.*"
-        Rails.cache.delete_matched(/#{model_name}\/#{self.id}-.*/)
+        self.class.cache_store.delete_matched(/#{model_name}\/#{self.id}-.*/)
         _destroy_without_cache
       end
       alias_method_chain :_destroy, :cache      
@@ -53,6 +53,10 @@ class LogicalModel
 
     module ClassMethods
       attr_accessor :expires_in
+
+      def cache_store
+        @cache_store ||= Rails.cache
+      end
 
       # Will return key for cache
       # @param id [String] (nil)
@@ -73,7 +77,7 @@ class LogicalModel
         cache_key = self.cache_key(id, params)
         # If there is a cached value return it
         self.logger.debug "LogicalModel Log CACHE: Reading cache key=#{cache_key}"
-        cached_result = Rails.cache.read(cache_key)
+        cached_result = self.cache_store.read(cache_key)
         if cached_result
           yield cached_result
         else
@@ -94,7 +98,7 @@ class LogicalModel
         # Generate key based on params
         cache_key = self.cache_key(id, params)
         self.logger.debug "LogicalModel Log CACHE: Writing cache key=#{cache_key}"
-        Rails.cache.write(cache_key, cache_value, :expires_in => self.expires_in || 10.minutes)
+        self.cache_store.write(cache_key, cache_value, :expires_in => self.expires_in || 10.minutes)
         cache_value
       end
       alias_method_chain :async_find_response, :cache
@@ -105,8 +109,8 @@ class LogicalModel
 
       def delete_with_cache(id, params = {})
         model_name = self.to_s.pluralize.underscore
-        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{id}-.*"
-        Rails.cache.delete_matched(/#{model_name}\/#{id}-.*/)
+        self.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{id}-.*"
+        self.cache_store.delete_matched(/#{model_name}\/#{id}-.*/)
         delete_without_cache(id, params)
       end
       alias_method_chain :delete, :cache
@@ -117,8 +121,8 @@ class LogicalModel
 
       def delete_multiple_with_cache(ids, params = {})
         model_name = self.to_s.pluralize.underscore
-        self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/(#{ids.join('|')})-.*"
-        Rails.cache.delete_matched(/#{model_name}\/(#{ids.join('|')})-.*/)
+        self.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/(#{ids.join('|')})-.*"
+        self.cache_store.delete_matched(/#{model_name}\/(#{ids.join('|')})-.*/)
         delete_multiple_without_cache(ids, params)
       end
       alias_method_chain :delete_multiple, :cache

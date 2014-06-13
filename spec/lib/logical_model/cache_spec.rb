@@ -3,20 +3,14 @@ require './lib/logical_model'
 describe LogicalModel::Cache do
   describe "when included" do
     before do
-      class Example
-        include LogicalModel::RESTActions
-        extend ActiveModel::Callbacks
-        define_model_callbacks :create, :save, :update, :destroy, :initialize
-        include LogicalModel::SafeLog
-        include LogicalModel::Cache
+      class Example < LogicalModel
+        
+        attribute :id
+        attribute :name
+        
+        self.hydra = Typhoeus::Hydra.new
 
-        # include ActiveModel Modules that are usefull
-        extend ActiveModel::Naming
-        include ActiveModel::Conversion
-        include ActiveModel::Serializers::JSON
-        include ActiveModel::Validations
-        include ActiveModel::MassAssignmentSecurity
-
+        self.enable_delete_multiple = true
       end
     end
 
@@ -47,26 +41,95 @@ describe LogicalModel::Cache do
 
     describe "cached value present" do
       before do
-        #set value on cache
+        Example.stub_chain(:cache_store, :read).and_return("test")
       end
 
       it "#async_find should return the cached value" do
-        # Example.async_find("id") { |r| result = r}
-        # result.should == cache
+        Example.async_find("id") { |r| @result = r}
+        @result.should == "test"
       end
     end
 
     describe "cached value not present" do
       before do
-        #clear cache
+        Example.stub_chain(:cache_store, :read).and_return(nil)
+        Example.stub_chain(:cache_store, :write).and_return(nil)
       end
 
       it "#async_find should look for the value" do
-        #async_find_without cache should be called
+        Example.should_receive(:async_find_without_cache)
+        Example.async_find("id") {|r| @result = r}
       end
 
       it "#async_find_response should store the value in the cache" do
-        #async_find_without_cache should be called
+        Example.should_receive(:async_find_response_without_cache)
+        Example.async_find_response("id", {}, "test")
+      end
+    end
+
+    describe "save" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        Example.cache_store.should_receive(:delete_matched)
+        @result.save
+      end
+    end
+
+    describe "update" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.any_instance.stub(:_update_without_cache).and_return(true)
+        Example.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        @result.should_receive(:_update_without_cache)
+        @result.update({:name => "test"}) 
+      end
+    end
+
+    describe "destroy" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        Example.cache_store.should_receive(:delete_matched)
+        @result.destroy
+      end
+    end
+
+    describe "delete" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        Example.cache_store.should_receive(:delete_matched)
+        Example.delete("id")
+      end
+    end
+
+    describe "delete_multiple" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        Example.cache_store.should_receive(:delete_matched)
+        Example.delete_multiple(["id1","id2"])
       end
     end
   end
