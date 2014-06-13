@@ -352,13 +352,17 @@ class LogicalModel
         request.on_complete do |response|
           if response.code >= 200 && response.code < 400
             log_ok(response)
-            yield self.new.from_json(response.body) # this from_json is defined in ActiveModel::Serializers::JSON
+            yield async_find_response(id, params, response.body)
           else
             log_failed(response)
           end
         end
 
         self.hydra.queue(request)
+      end
+
+      def async_find_response(id, params, body)
+        self.new.from_json(body) # this from_json is defined in ActiveModel::Serializers::JSON
       end
 
       # synchronic find
