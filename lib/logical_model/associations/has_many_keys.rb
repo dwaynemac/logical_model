@@ -77,7 +77,8 @@ class LogicalModel
 
           # Initialize instance of associated object
           define_method "new_#{StringHelper.singularize(association.to_s)}" do |attr_params|
-            clazz = attr_class
+            clazz_name = attr_params['_type']
+            clazz = clazz_name.blank? ? attr_class  : clazz_name.constantize
 
             return unless clazz
 
