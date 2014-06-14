@@ -66,6 +66,8 @@ class LogicalModel
                 # in this case we recieved instanciated objects
                 collection << attr_params
               else
+                clazz_name = attr_params['_type']
+                attr_class = clazz_name.constantize unless clazz_name.blank?
                 # in this case we recieved object attributes, we instanciate here
                 collection << attr_class.new(attr_params)
               end
