@@ -140,7 +140,6 @@ describe LogicalModel::Cache do
 
     class SecondaryExample < LogicalModel
       attribute :id
-      attribute :name
 
       self.hydra = Typhoeus::Hydra.new
 
@@ -149,25 +148,29 @@ describe LogicalModel::Cache do
       belongs_to :example
     end
 
+    class SecondaryExampleChild < SecondaryExample
+      attribute :name
+    end
+
     before do
       Example.has_many_keys = [:secondary_examples]
     end
 
     it "should set belongs_to_keys" do
-      SecondaryExample.belongs_to_keys.should_not be_blank
+      SecondaryExampleChild.belongs_to_keys.should_not be_blank
     end
 
     describe "save" do
       before do
         Example.stub_chain(:cache_store, :read).and_return(Example.new)
-        SecondaryExample.stub_chain(:cache_store, :read).and_return(SecondaryExample.new(:example_id => 123))
+        SecondaryExampleChild.stub_chain(:cache_store, :read).and_return(SecondaryExampleChild.new(:example_id => 123))
         Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
-        SecondaryExample.stub_chain(:cache_store, :delete_matched).and_return(nil)
-        SecondaryExample.async_find("id") {|r| @result = r}
+        SecondaryExampleChild.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        SecondaryExampleChild.async_find("id") {|r| @result = r}
       end
 
       it "should clear cache" do
-        SecondaryExample.cache_store.should_receive(:delete_matched).with(/example\/123-.*/)
+        SecondaryExampleChild.cache_store.should_receive(:delete_matched).with(/example\/123-.*/)
         @result.save
       end
     end
