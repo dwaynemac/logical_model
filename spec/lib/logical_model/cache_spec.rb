@@ -174,5 +174,20 @@ describe LogicalModel::Cache do
         @result.save
       end
     end
+
+    describe "adding a new model to has_many" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new(:id => 123))
+        SecondaryExampleChild.stub_chain(:cache_store, :read).and_return(SecondaryExampleChild.new(:example_id => 123))
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        SecondaryExampleChild.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        Example.async_find("123") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        Example.cache_store.should_receive(:delete_matched).with(/examples\/123-.*/)
+        @result.new_secondary_example(:example_id => 123)
+      end
+    end
   end
 end

@@ -5,6 +5,8 @@ class LogicalModel
       base.extend ClassMethods
       base.send(:include, InstanceMethods)
       base.send(:after_initialize, :initialize_loaded_at)
+      base.send(:define_model_callbacks, :new_nested)
+      base.send(:after_new_nested, :delete_cached)
     end
 
     module InstanceMethods
@@ -60,7 +62,6 @@ class LogicalModel
           end
         end
       end
-
     end
 
     module ClassMethods
@@ -141,6 +142,5 @@ class LogicalModel
       end
       alias_method_chain :delete_multiple, :cache
     end
-
   end
 end
