@@ -14,6 +14,9 @@ class LogicalModel
           attr_accessor "#{key}_id"
           attr_class = get_attr_class(key, options)
 
+          @belongs_to_keys ||= []
+          @belongs_to_keys << key
+
           define_method("#{key}=") do |param|
             if param.is_a?(Hash)
               param.stringify_keys!
@@ -49,6 +52,10 @@ class LogicalModel
             eval(key.to_s) << temp_object
             temp_object
           end
+        end
+
+        def belongs_to_keys
+          @belongs_to_keys
         end
 
         private

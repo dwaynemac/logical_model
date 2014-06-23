@@ -1,17 +1,19 @@
 require './lib/logical_model'
 
 describe LogicalModel::Cache do
+  class Example < LogicalModel
+      
+    attribute :id
+    attribute :name
+    
+    self.hydra = Typhoeus::Hydra.new
+
+    self.enable_delete_multiple = true
+  end
+
   describe "when included" do
     before do
-      class Example < LogicalModel
-        
-        attribute :id
-        attribute :name
-        
-        self.hydra = Typhoeus::Hydra.new
-
-        self.enable_delete_multiple = true
-      end
+      
     end
 
     it "adds expires_in class method" do
@@ -130,6 +132,43 @@ describe LogicalModel::Cache do
       it "should clear cache" do
         Example.cache_store.should_receive(:delete_matched)
         Example.delete_multiple(["id1","id2"])
+      end
+    end
+  end
+
+  describe "when using has_many & belongs_to" do
+
+    class SecondaryExample < LogicalModel
+      attribute :id
+      attribute :name
+
+      self.hydra = Typhoeus::Hydra.new
+
+      self.enable_delete_multiple = true
+
+      belongs_to :example
+    end
+
+    before do
+      Example.has_many_keys = [:secondary_examples]
+    end
+
+    it "should set belongs_to_keys" do
+      SecondaryExample.belongs_to_keys.should_not be_blank
+    end
+
+    describe "save" do
+      before do
+        Example.stub_chain(:cache_store, :read).and_return(Example.new)
+        SecondaryExample.stub_chain(:cache_store, :read).and_return(SecondaryExample.new(:example_id => 123))
+        Example.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        SecondaryExample.stub_chain(:cache_store, :delete_matched).and_return(nil)
+        SecondaryExample.async_find("id") {|r| @result = r}
+      end
+
+      it "should clear cache" do
+        SecondaryExample.cache_store.should_receive(:delete_matched).with(/example\/123-.*/)
+        @result.save
       end
     end
   end
