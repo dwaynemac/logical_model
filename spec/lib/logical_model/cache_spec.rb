@@ -170,7 +170,7 @@ describe LogicalModel::Cache do
       end
 
       it "should clear cache" do
-        SecondaryExampleChild.cache_store.should_receive(:delete_matched).with(/example\/123-.*/)
+        SecondaryExampleChild.cache_store.should_receive(:delete_matched).with(/examples\/123-.*/)
         @result.save
       end
     end

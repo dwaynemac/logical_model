@@ -55,7 +55,27 @@ class LogicalModel
         end
 
         def belongs_to_keys
-          @belongs_to_keys
+          # This hack was needed to consider the case where the belongs_to was set on a parent class, for example:
+          #
+          # class ContactAttribute < LogicalModel
+          #   ...
+          #   belongs_to :contact
+          # end
+          #
+          # class Telephone < ContactAttribute
+          #   ...
+          # end
+          #
+          # It returns the parent's class variable if present.  
+          result = nil
+          if !@belongs_to_keys.nil?
+            result = @belongs_to_keys
+          elsif self.superclass.respond_to? :belongs_to_keys
+            result = self.superclass.belongs_to_keys
+          else
+            result = nil
+          end
+          result
         end
 
         private
