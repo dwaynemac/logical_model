@@ -52,10 +52,11 @@ class LogicalModel
         
         if self.class.respond_to?(:belongs_to_keys) && !self.class.belongs_to_keys.blank?
           # If it belongs to another model (or models)
-          self.class.belongs_to_keys.each do |model_name|
-            self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name.to_s.pluralize}\/#{self.send("#{model_name}_id")}-.*"
+          self.class.belongs_to_keys.each do |association_name, association_class|
+            model_name = association_class.to_s.pluralize.underscore
+            self.class.logger.debug "LogicalModel Log CACHE: Delete cache for #{model_name}\/#{self.send("#{association_name}_id")}-.*"
             # Delete cached models
-            self.class.cache_store.delete_matched(/#{model_name.to_s.pluralize}\/#{self.send("#{model_name}_id")}-.*/)
+            self.class.cache_store.delete_matched(/#{model_name}\/#{self.send("#{association_name}_id")}-.*/)
           end
         end
       end
