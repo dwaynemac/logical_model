@@ -66,6 +66,8 @@ class LogicalModel
                 # in this case we recieved instanciated objects
                 collection << attr_params
               else
+                clazz_name = attr_params['_type']
+                attr_class = clazz_name.constantize unless clazz_name.blank?
                 # in this case we recieved object attributes, we instanciate here
                 collection << attr_class.new(attr_params)
               end
@@ -75,13 +77,16 @@ class LogicalModel
 
           # Initialize instance of associated object
           define_method "new_#{StringHelper.singularize(association.to_s)}" do |attr_params|
-            clazz = attr_class
+            run_callbacks :new_nested do
+              clazz_name = attr_params['_type']
+              clazz = clazz_name.blank? ? attr_class  : clazz_name.constantize
 
-            return unless clazz
+              return unless clazz
 
-            temp_object = clazz.new(attr_params.merge({"#{self.json_root}_id" => self.id}))
-            eval(association.to_s) << temp_object
-            temp_object
+              temp_object = clazz.new(attr_params.merge({"#{self.json_root}_id" => self.id}))
+              eval(association.to_s) << temp_object
+              temp_object
+            end
           end
 
           # this method loads the contact attributes from the html form (using nested resources conventions)
