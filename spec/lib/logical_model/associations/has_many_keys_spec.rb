@@ -1,11 +1,10 @@
-require './lib/logical_model/associations/has_many_keys.rb'
+require './lib/logical_model'
 
 describe LogicalModel::Associations::HasManyKeys do
 
   describe "when included" do
     before do
-      class Example
-        include LogicalModel::Associations::HasManyKeys
+      class Example < LogicalModel
       end
     end
 
@@ -17,22 +16,18 @@ describe LogicalModel::Associations::HasManyKeys do
   describe ".has_many" do
     before do
       # has_many :items needs Item class
-      class Item
-        attr_accessor :example_id
-        attr_accessor :name
-        def initialize(attrs={})
-          @example_id = attrs['example_id']
-          @name = attrs['name']
-        end
+      class Item < LogicalModel
+        attribute :name
+        belongs_to :example
       end
 
-      class Example
-        include LogicalModel::Associations::HasManyKeys
-        has_many :items
+      class SpecialItem < LogicalModel
+        attribute :special_attribute
+        belongs_to :example
+      end
 
-        def initialize(atrs={})
-          self.items = atrs[:items] if atrs[:items]
-        end
+      class Example < LogicalModel
+        has_many :items
 
         def json_root
           'example'
@@ -67,7 +62,6 @@ describe LogicalModel::Associations::HasManyKeys do
 
     describe "adds #association accessor" do
       before do
-        debugger
         @e = Example.new(items: [Item.new()])
       end
       it "visible at instance" do
@@ -91,6 +85,13 @@ describe LogicalModel::Associations::HasManyKeys do
         e = Example.new
         i = e.new_item( {} )
         i.example_id.should == e.id
+      end
+    end
+
+    describe "when I initialize the has_many item using an extended class it should create the element using the correct class" do
+      it "should build has_many correctly" do
+        @example = Example.new({:items_attributes => [{"_type"=>"SpecialItem", "special_attribute"=>"test", "value"=>"123"}]})
+        @example.items.first.class.should == SpecialItem
       end
     end
 
