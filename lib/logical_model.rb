@@ -52,7 +52,7 @@ require 'logical_model/cache'
 #  RemoteResource#destroy
 class LogicalModel
   extend ActiveModel::Callbacks
-  define_model_callbacks :create, :save, :update, :destroy, :initialize
+  define_model_callbacks :create, :save, :update, :destroy, :initialize, :new_nested
 
   include LogicalModel::Hydra
   include LogicalModel::ResponsesConfiguration
