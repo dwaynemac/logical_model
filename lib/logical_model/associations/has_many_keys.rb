@@ -93,8 +93,11 @@ class LogicalModel
           define_method "#{association}_attributes=" do |key_attributes|
             array = []
             key_attributes.each do |attr_params|
+              clazz_name = attr_params['_type']
+              clazz = clazz_name.blank? ? attr_class  : clazz_name.constantize
+              
               attr_params.to_hash.symbolize_keys!
-              array << attr_class.new(attr_params)
+              array << clazz.new(attr_params)
             end
             instance_variable_set("@#{association}", array)
           end
