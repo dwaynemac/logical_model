@@ -62,7 +62,6 @@ class LogicalModel
   include LogicalModel::ApiKey
   include LogicalModel::SafeLog
   include LogicalModel::Associations
-  include LogicalModel::Cache
 
   # include ActiveModel Modules that are usefull
   extend ActiveModel::Naming
