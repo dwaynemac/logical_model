@@ -74,7 +74,7 @@ module TyphoeusFix
   # @return [Arraya/Hash]
   def convert(hash)
     if encoded?(hash)
-      Hash[hash.sort].values
+      Hash[hash.sort_by{|k,v|k.to_i}].values
     else
       hash
     end
