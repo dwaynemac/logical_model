@@ -1,4 +1,3 @@
-require 'timeout'
 require 'active_model'
 require 'typhoeus'
 require 'active_support/all' # todo migrate to yajl

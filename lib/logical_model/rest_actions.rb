@@ -57,10 +57,7 @@ class LogicalModel
         params = { self.json_root => self.attributes }.merge(params)
         params = self.class.merge_key(params)
 
-        response = nil
-        Timeout::timeout(self.class.timeout/1000) do
-          response = Typhoeus::Request.post( self.class.resource_uri, :body => params, :timeout => self.class.timeout )
-        end
+        response = Typhoeus::Request.post( self.class.resource_uri, body: params, timeout: self.class.timeout )
         self.last_response_code = response.code
         if response.code == 201 || response.code == 202
           log_ok(response)
@@ -80,9 +77,6 @@ class LogicalModel
           log_failed(response)
           return nil
         end
-      rescue Timeout::Error
-        self.class.logger.warn "timeout"
-        return nil
       end
 
       # Updates Objects attributes, this will only send attributes passed as arguments
@@ -102,12 +96,9 @@ class LogicalModel
 
         params = self.class.merge_key(params)
 
-        response = nil
-        Timeout::timeout(self.class.timeout/1000) do
-          response = Typhoeus::Request.put( self.class.resource_uri(id),
-                                            :params => params,
-                                            :timeout => self.class.timeout )
-        end
+        response = Typhoeus::Request.put( self.class.resource_uri(id),
+                                          params: params,
+                                          timeout: self.class.timeout )
 
         if response.code == 200
           log_ok(response)
@@ -116,10 +107,6 @@ class LogicalModel
           log_failed(response)
           return nil
         end
-
-      rescue Timeout::Error
-        self.class.logger.warn("request timed out")
-        return nil
       end
 
       # Saves Objects attributes
@@ -141,10 +128,7 @@ class LogicalModel
 
         params = { self.json_root => sending_params }
         params = self.class.merge_key(params)
-        response = nil
-        Timeout::timeout(self.class.timeout/1000) do
-          response = Typhoeus::Request.put( self.class.resource_uri(id), :params => params, :timeout => self.class.timeout )
-        end
+        response = Typhoeus::Request.put( self.class.resource_uri(id), params: params, timeout: self.class.timeout )
         if response.code == 200
           log_ok(response)
           return self
@@ -152,9 +136,6 @@ class LogicalModel
           log_failed(response)
           return nil
         end
-      rescue Timeout::Error
-        self.class.logger.warn "timeout"
-        return nil
       end
 
       # Destroy object
@@ -216,13 +197,8 @@ class LogicalModel
         self.retries.times do
           begin
             async_all(options){|i| result = i}
-            Timeout::timeout(self.timeout/1000) do
-              self.hydra.run
-            end
+            self.hydra.run
             break unless result.nil?
-          rescue Timeout::Error
-            self.logger.warn("timeout")
-            result = nil
           end
         end
         result
@@ -277,13 +253,8 @@ class LogicalModel
         self.retries.times do
           begin
             async_paginate(options){|i| result = i}
-            Timeout::timeout(self.timeout/1000) do
-              self.hydra.run
-            end
+            self.hydra.run
             break unless result.nil?
-          rescue Timeout::Error
-            self.logger.warn("timeout")
-            result = nil
           end
         end
         result
@@ -326,13 +297,8 @@ class LogicalModel
       def count(options={})
         result = nil
         async_count(options){|i| result = i}
-        Timeout::timeout(self.timeout/1000) do
-          self.hydra.run
-        end
+        self.hydra.run
         result
-      rescue Timeout::Error
-        self.logger.warn("timeout")
-        return nil
       end
 
       # Asynchronic Find
@@ -369,13 +335,8 @@ class LogicalModel
       def find(id, params = {})
         result = nil
         async_find(id, params){|i| result = i}
-        Timeout::timeout(self.timeout/1000) do
-          self.hydra.run
-        end
+        self.hydra.run
         result
-      rescue Timeout::Error
-        self.logger.warn("timeout")
-        return nil
       end
 
       # Deletes Object#id
@@ -391,13 +352,10 @@ class LogicalModel
 
         params = self.merge_key(params)
 
-        response = nil
-        Timeout::timeout(self.timeout/1000) do
-          response = Typhoeus::Request.delete( self.resource_uri(id),
-                                               :params => params,
-                                               :timeout => self.timeout
-          )
-        end
+        response = Typhoeus::Request.delete( self.resource_uri(id),
+                                             params: params,
+                                             timeout: self.timeout
+        )
         if response.code == 200
           log_ok(response)
           return self
@@ -405,9 +363,6 @@ class LogicalModel
           log_failed(response)
           return nil
         end
-      rescue Timeout::Error
-        self.logger.warn "timeout"
-        return nil
       end
 
       # Deletes all Objects matching given ids
@@ -427,13 +382,10 @@ class LogicalModel
         params = self.merge_key(params)
         params = params.merge({:ids => ids})
 
-        response = nil
-        Timeout::timeout(self.timeout/1000) do
-          response = Typhoeus::Request.delete( self.resource_uri+"/destroy_multiple",
-                                               :params => params,
-                                               :timeout => self.timeout
-          )
-        end
+        response = Typhoeus::Request.delete( self.resource_uri+"/destroy_multiple",
+                                             params: params,
+                                             timeout: self.timeout
+        )
         if response.code == 200
           log_ok(response)
           return self
@@ -441,9 +393,6 @@ class LogicalModel
           log_failed(response)
           return nil
         end
-      rescue Timeout::Error
-        self.logger.warn "timeout"
-        return nil
       end
     end
   end
