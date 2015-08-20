@@ -318,9 +318,10 @@ class LogicalModel
         request.on_complete do |response|
           if response.code >= 200 && response.code < 400
             log_ok(response)
-            yield async_find_response(id, params, response.body)
+            yield async_find_response(id, params, response.body), response.code
           else
             log_failed(response)
+            yield nil, response.code
           end
         end
 
@@ -328,14 +329,29 @@ class LogicalModel
       end
 
       def async_find_response(id, params, body)
-        self.new.from_json(body) # this from_json is defined in ActiveModel::Serializers::JSON
+        if body.blank?
+          # if request failed failed unexpectedly we may get code 200 but empty body
+          self.logger.warn("got response code 200 but empty body")
+          return nil
+        end
+
+        self.new.from_json(body)
       end
 
       # synchronic find
       def find(id, params = {})
         result = nil
-        async_find(id, params){|i| result = i}
-        self.hydra.run
+        self.retries.times do
+          begin
+            response_code = nil
+            async_find(id, params) do |res,code|
+              result = res
+              response_code = code
+            end
+            self.hydra.run
+            break unless result.nil? && (response_code != 404) # don't retry if response was 404
+          end
+        end
         result
       end
 
