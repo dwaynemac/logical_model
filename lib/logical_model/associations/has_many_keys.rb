@@ -66,6 +66,7 @@ class LogicalModel
                 # in this case we recieved instanciated objects
                 collection << attr_params
               else
+                # TODO if params has symbol key :_type this won't work
                 clazz_name = attr_params['_type']
                 attr_class = clazz_name.constantize unless clazz_name.blank?
                 # in this case we recieved object attributes, we instanciate here
