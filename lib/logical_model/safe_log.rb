@@ -43,7 +43,15 @@ class LogicalModel
       end
 
       def logger
-        @logger ||= Logger.new(self.log_path || "log/logical_model.log")
+        unless @logger
+          @logger = Logger.new(self.log_path || "log/logical_model.log")
+          if defined?(Rails)
+            @logger.level = Rails.logger.level
+          else
+            @logger.level = Logger::DEBUG
+          end
+        end
+        @logger
       end
 
       # Filters api_key
