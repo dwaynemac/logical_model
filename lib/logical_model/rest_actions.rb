@@ -52,7 +52,9 @@ class LogicalModel
       #   @person = Person.new(params[:person])
       #   @person.create( non_attribute_param: "value" )
       def _create(params = {})
-        return false unless valid?
+        unless params[:ignore_validation]
+          return false unless valid?
+        end
 
         params = { self.json_root => self.attributes }.merge(params)
         params = self.class.merge_key(params)
@@ -92,7 +94,9 @@ class LogicalModel
 
         self.attributes = params[self.json_root]
 
-        return false unless valid?
+        unless params[:ignore_validation]
+          return false unless valid?
+        end
 
         params = self.class.merge_key(params)
 
