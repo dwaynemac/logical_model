@@ -67,7 +67,7 @@ class LogicalModel
   include ActiveModel::Conversion
   include ActiveModel::Serializers::JSON
   include ActiveModel::Validations
-  include ActiveModel::MassAssignmentSecurity
+#  include ActiveModel::MassAssignmentSecurity
 
 
   self.include_root_in_json = false

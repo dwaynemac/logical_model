@@ -9,7 +9,7 @@ class LogicalModel
     module InstanceMethods
 
       def attributes=(attrs)
-        sanitize_for_mass_assignment(attrs).each{|k,v| send("#{k}=",v) if respond_to?("#{k}=")}
+        attrs.each{|k,v| send("#{k}=",v) if respond_to?("#{k}=")}
       end
 
       def attributes
