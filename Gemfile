@@ -1,8 +1,8 @@
 # encoding: UTF-8
 source "http://rubygems.org"
 
-gem "activemodel"
-gem "activesupport"
+gem "activemodel", '4.2.8'
+gem "activesupport", '4.2.8'
 gem "typhoeus", '0.6.4'
 gem "ethon", "0.6.3"
 gem "kaminari", '~> 1.2.1'
