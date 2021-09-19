@@ -17,7 +17,7 @@ group :development, :test do
   #gem "rcov"
   gem "sqlite3"
   gem "sinatra", " ~> 1.2.6"
-  gem "json", '2.0.0'
+  gem "json", '2.3.0'
   gem 'gemcutter'
 	
   gem "rspec-rails"

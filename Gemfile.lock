@@ -50,7 +50,7 @@ GEM
       bundler (~> 1.0)
       git (>= 1.2.5)
       rake
-    json (2.0.0)
+    json (2.3.0)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -140,7 +140,7 @@ DEPENDENCIES
   gemcutter
   guard-rspec
   jeweler (~> 1.6.4)
-  json (= 2.0.0)
+  json (= 2.3.0)
   kaminari (~> 1.2.1)
   libnotify
   rake
