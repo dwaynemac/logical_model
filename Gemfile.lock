@@ -33,7 +33,7 @@ GEM
     ffi (1.15.4)
     formatador (0.3.0)
     gemcutter (0.7.1)
-    git (1.9.1)
+    git (1.11.0)
       rchardet (~> 1.8)
     guard (2.18.0)
       formatador (>= 0.2.4)
