@@ -1,11 +1,11 @@
 # encoding: UTF-8
 source "http://rubygems.org"
 
-gem "activemodel", '4.2.8'
-gem "activesupport", '4.2.8'
+gem "activemodel", '7.0.3.1'
+gem "activesupport", '7.0.3.1'
 gem "typhoeus", '0.6.4'
 gem "ethon", "0.6.3"
-gem "kaminari", '~> 1.2.1'
+gem "kaminari", '~> 1.2.2'
 
 group :development, :test do
   #gem 'debugger'
