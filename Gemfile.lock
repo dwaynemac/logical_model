@@ -130,7 +130,7 @@ GEM
     tilt (1.4.1)
     typhoeus (0.6.4)
       ethon (~> 0.6.0)
-    tzinfo (1.2.9)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
 
 PLATFORMS
