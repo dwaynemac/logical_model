@@ -16,7 +16,7 @@ group :development, :test do
   gem "jeweler", "~> 1.6.4"
   #gem "rcov"
   gem "sqlite3"
-  gem "sinatra", " ~> 1.2.6"
+  gem "sinatra", "~> 2.2.3"
   gem "json", '2.0.0'
   gem 'gemcutter'
 	
