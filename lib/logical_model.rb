@@ -86,7 +86,8 @@ class LogicalModel
       initialize_without_callback(attributes)
     end
   end
-  alias_method_chain :initialize, :callback
+  alias_method :initialize_without_callback, :initialize
+  alias_method :initialize, :initialize_with_callback
 
   class << self
     attr_accessor :timeout, :retries,
