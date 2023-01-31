@@ -24,7 +24,8 @@ class LogicalModel
         delete_cached
         _save_without_cache
       end
-      alias_method_chain :_save, :cache
+      alias_method :_save_without_cache, :_save
+      alias_method :_save, :_save_with_cache
 
       def _update(params={})
         super
@@ -34,7 +35,8 @@ class LogicalModel
         delete_cached
         _update_without_cache params
       end
-      alias_method_chain :_update, :cache
+      alias_method :_update_without_cache, :_update
+      alias_method :_update, :_update_with_cache
 
       def _destroy(params={})
         super
@@ -44,7 +46,8 @@ class LogicalModel
         delete_cached
         _destroy_without_cache
       end
-      alias_method_chain :_destroy, :cache
+      alias_method :_destroy_without_cache, :_destroy
+      alias_method :_destroy, :_destroy_with_cache
 
       def delete_cached
         model_name = self.class.to_s.pluralize.underscore
@@ -98,7 +101,8 @@ class LogicalModel
           async_find_without_cache(id, params, &block)
         end
       end
-      alias_method_chain :async_find, :cache
+      alias_method :async_find_without_cache, :async_find
+      alias_method :async_find, :async_find_with_cache
 
       def async_find_response(id, params={}, body)
         super(id, params, body)
@@ -114,7 +118,8 @@ class LogicalModel
         self.cache_store.write(cache_key, cache_value, :expires_in => self.expires_in || 10.minutes)
         cache_value
       end
-      alias_method_chain :async_find_response, :cache
+      alias_method :async_find_response_without_cache, :async_find_response
+      alias_method :async_find_response, :async_find_response_with_cache
 
       def delete(id, params={})
         super(id, params)
@@ -127,7 +132,8 @@ class LogicalModel
         #TODO: also delete cache for parent (belongs_to)
         delete_without_cache(id, params)
       end
-      alias_method_chain :delete, :cache
+      alias_method :delete_without_cache, :delete
+      alias_method :delete, :delete_with_cache
 
       def delete_multiple(ids, params={})
         super(ids, params)
@@ -140,7 +146,8 @@ class LogicalModel
         #TODO: also delete cache for parent (belongs_to)
         delete_multiple_without_cache(ids, params)
       end
-      alias_method_chain :delete_multiple, :cache
+      alias_method :delete_multiple_without_cache, :delete_multiple
+      alias_method :delete_multiple, :delete_multiple_with_cache
     end
   end
 end
