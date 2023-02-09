@@ -1,10 +1,10 @@
 # encoding: UTF-8
 source "http://rubygems.org"
 
-gem "activemodel", '4.2.8'
-gem "activesupport", '4.2.8'
-gem "typhoeus", '0.6.4'
-gem "ethon", "0.6.3"
+gem "activemodel", '4.2.11.3'
+gem "activesupport", '4.2.11.3'
+gem "typhoeus", '>= 1.0.1'
+gem "ethon", ">= 0.8.0"
 gem "kaminari", '~> 1.2.1'
 
 group :development, :test do
@@ -20,7 +20,7 @@ group :development, :test do
   gem "json", '2.0.0'
   gem 'gemcutter'
 	
-  gem "rspec-rails"
+  gem "rspec-rails", '2.11.0'
 
   gem 'guard-rspec'
  
