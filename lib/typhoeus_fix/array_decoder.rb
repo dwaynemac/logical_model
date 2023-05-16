@@ -33,9 +33,9 @@ module TyphoeusFix
   #
   # @return [Hash] Hash with properly decoded nested arrays.
   def decode!(hash)
-    return hash unless hash.is_a?(Hash)
+    return hash unless is_hash?(hash)
     hash.each_pair do |key,value|
-      if value.is_a?(Hash)
+      if is_hash?(value)
         decode!(value)
         hash[key] = convert(value)
       end
@@ -48,6 +48,10 @@ module TyphoeusFix
   end
 
   private
+
+  def is_hash?(hash)
+    hash.is_a?(Hash) || hash.is_a?(HashWithIndifferentAccess) || hash.is_a?(ActionController::Parameters)
+  end
 
   # Checks if Hash is an Array encoded as a Hash.
   # Specifically will check for the Hash to have this
@@ -74,6 +78,7 @@ module TyphoeusFix
   # @return [Arraya/Hash]
   def convert(hash)
     if encoded?(hash)
+      hash = hash.to_unsafe_h if hash.respond_to?(:to_unsafe_h)
       Hash[hash.sort_by{|k,v|k.to_i}].values
     else
       hash
