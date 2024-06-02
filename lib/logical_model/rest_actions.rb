@@ -236,11 +236,9 @@ class LogicalModel
             # this paginate is will_paginate's Array pagination
             collection = Kaminari.paginate_array(
                 result_set[:collection],
-                {
-                    :total_count=>result_set[:total],
-                    :limit => options[:per_page],
-                    :offset => options[:per_page] * ([options[:page], 1].max - 1)
-                }
+                  limit: options[:per_page],
+                  offset: options[:per_page] * ([options[:page], 1].max - 1),
+                  total_count: result_set[:total]
             )
 
             yield collection
